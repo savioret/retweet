@@ -17,12 +17,14 @@ class Main(object):
         access_token_secret = ''
         self.lasttweetidfile = 'lastsenttweetid'
         __pathtoconf = sys.argv[-1]
+        # checks for the path to the configuration
         if not os.path.exists(__pathtoconf):
             print('the path you provided for yaspe configuration file does not exists')
             sys.exit(1)
         if not os.path.isfile(__pathtoconf):
             print('the path you provided for yaspe configuration is not a file')
             sys.exit(1)
+        # read the configuration file
         __config = ConfigParser.ConfigParser()
         try:
             with open(__pathtoconf) as __conffile:
@@ -38,6 +40,7 @@ class Main(object):
             print(__err)
             sys.exit(1)
 
+        # activate the twitter api
         self.auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         self.auth.secure = True
         self.auth.set_access_token(access_token, access_token_secret)
