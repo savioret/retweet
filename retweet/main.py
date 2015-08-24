@@ -16,28 +16,28 @@ class Main(object):
         access_token = ''
         access_token_secret = ''
         self.lasttweetidfile = 'lastsenttweetid'
-        __pathtoconf = sys.argv[-1]
+        pathtoconf = sys.argv[-1]
         # checks for the path to the configuration
-        if not os.path.exists(__pathtoconf):
+        if not os.path.exists(pathtoconf):
             print('the path you provided for yaspe configuration file does not exists')
             sys.exit(1)
-        if not os.path.isfile(__pathtoconf):
+        if not os.path.isfile(pathtoconf):
             print('the path you provided for yaspe configuration is not a file')
             sys.exit(1)
         # read the configuration file
-        __config = ConfigParser.ConfigParser()
+        config = ConfigParser.ConfigParser()
         try:
-            with open(__pathtoconf) as __conffile:
-                __config.readfp(__conffile)
-                if __config.has_section('main'):
-                    self.user_to_retweet = __config.get('main','screen_name_of_the_user_to_retweet')
-                    consumer_key = __config.get('main','consumer_key')
-                    consumer_secret = __config.get('main','consumer_secret')
-                    access_token = __config.get('main','access_token')
-                    access_token_secret = __config.get('main','access_token_secret')
-                    self.lasttweetidfile = __config.get('main','last_sent_tweet_id_file')
-        except (ConfigParser.Error, IOError, OSError) as __err:
-            print(__err)
+            with open(pathtoconf) as conffile:
+                config.readfp(conffile)
+                if config.has_section('main'):
+                    self.user_to_retweet = config.get('main','screen_name_of_the_user_to_retweet')
+                    consumer_key = config.get('main','consumer_key')
+                    consumer_secret = config.get('main','consumer_secret')
+                    access_token = config.get('main','access_token')
+                    access_token_secret = config.get('main','access_token_secret')
+                    self.lasttweetidfile = config.get('main','last_sent_tweet_id_file')
+        except (ConfigParser.Error, IOError, OSError) as err:
+            print(err)
             sys.exit(1)
 
         # activate the twitter api
@@ -50,32 +50,32 @@ class Main(object):
     def main(self):
         '''lalalal'''
         # get the 20 last tweets
-        __lasttweets = self.api.user_timeline(self.user_to_retweet)
+        lasttweets = self.api.user_timeline(self.user_to_retweet)
 
         if os.path.exists(self.lasttweetidfile) and os.path.isfile(self.lasttweetidfile):
             # a file with the last sent tweet id exists, using it
-            with open(self.lasttweetidfile) as __desc:
-                __lasttweetid = int(__desc.read())
-            print("last sent tweet:{}").format(__lasttweetid)
+            with open(self.lasttweetidfile) as desc:
+                lasttweetid = int(desc.read())
+            print("last sent tweet:{}").format(lasttweetid)
         else:
             # no previously sent tweet, get the first one (last of the list)
-            __lasttweetid = __lasttweets[-1].id
+            lasttweetid = lasttweets[-1].id
         # extract the last 20 tweet ids
-        __lasttweetids = [__tweet.id for __tweet in __lasttweets]
-        __lasttweetids.reverse()
-        print("last tweets:{}").format(' '.join([unicode(__j) for __j in __lasttweetids]))
-        if __lasttweetid in __lasttweetids:
-            __tweetstosend = __lasttweetids[__lasttweetids.index(__lasttweetid):]
-            __tweetstosend.remove(__lasttweetid)
-            print("tweets to send:{}").format(' '.join([unicode(__j) for __j in __tweetstosend]))
-            for __i in __tweetstosend:
+        lasttweetids = [tweet.id for tweet in lasttweets]
+        lasttweetids.reverse()
+        print("last tweets:{}").format(' '.join([unicode(j) for j in lasttweetids]))
+        if lasttweetid in lasttweetids:
+            tweetstosend = lasttweetids[lasttweetids.index(lasttweetid):]
+            tweetstosend.remove(lasttweetid)
+            print("tweets to send:{}").format(' '.join([unicode(j) for j in tweetstosend]))
+            for i in tweetstosend:
                 try:
-                    self.api.retweet(__i)
-                    print("tweet {} sent!").format(unicode(__i))
-                except (tweepy.error.TweepError) as __err:
-                    print("{}").format(unicode(__err))
+                    self.api.retweet(i)
+                    print("tweet {} sent!").format(unicode(i))
+                except (tweepy.error.TweepError) as err:
+                    print("{}").format(unicode(err))
                 WaitAMoment()
             # if we really sent tweets, store the last one
-            if len(__tweetstosend) != 0:
-                with open(self.lasttweetidfile, 'w') as __desc:
-                    __desc.write(unicode(__tweetstosend[-1]))
+            if len(tweetstosend) != 0:
+                with open(self.lasttweetidfile, 'w') as desc:
+                    desc.write(unicode(tweetstosend[-1]))
