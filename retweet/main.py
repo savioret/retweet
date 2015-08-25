@@ -51,26 +51,26 @@ class Main(object):
             # a file with the last sent tweet id exists, using it
             with open(self.lasttweetidfile) as desc:
                 lasttweetid = int(desc.read())
-            print("last sent tweet:{}").format(lasttweetid)
+            print("last sent tweet:{}".format(lasttweetid))
         else:
             # no previously sent tweet, get the first one (last of the list)
             lasttweetid = lasttweets[-1].id
         # extract the last 20 tweet ids
         lasttweetids = [tweet.id for tweet in lasttweets]
         lasttweetids.reverse()
-        print("last tweets:{}").format(' '.join([unicode(j) for j in lasttweetids]))
+        print("last tweets:{}".format(' '.join([str(j) for j in lasttweetids])))
         if lasttweetid in lasttweetids:
             tweetstosend = lasttweetids[lasttweetids.index(lasttweetid):]
             tweetstosend.remove(lasttweetid)
-            print("tweets to send:{}").format(' '.join([unicode(j) for j in tweetstosend]))
+            print("tweets to send:{}".format(' '.join([str(j) for j in tweetstosend])))
             for i in tweetstosend:
                 try:
                     self.api.retweet(i)
-                    print("tweet {} sent!").format(unicode(i))
+                    print("tweet {} sent!".format(i))
                 except (tweepy.error.TweepError) as err:
-                    print("{}").format(unicode(err))
+                    print("{}".format(err))
                 WaitAMoment()
             # if we really sent tweets, store the last one
             if len(tweetstosend) != 0:
                 with open(self.lasttweetidfile, 'w') as desc:
-                    desc.write(unicode(tweetstosend[-1]))
+                    desc.write(str(tweetstosend[-1]))
