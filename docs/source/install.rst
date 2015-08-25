@@ -2,19 +2,19 @@ How to install Retweet
 =============================
 From PyPI
 ^^^^^^^^^
-    $ pip install retweet
+    $ pip3 install retweet
 
 From sources
 ^^^^^^^^^^^^
-* You need at least Python 2.7.
+* You need at least Python 3.4.
 * Untar the tarball and go to the source directory with the following commands::
 
-    $ tar zxvf retweet-0.1.tar.gz
+    $ tar zxvf retweet-0.2.tar.gz
     $ cd retweet
 
 * Next, to install Retweet on your computer, type the following command with the root user::
 
-    $ python2.7 setup.py install
+    $ python3.4 setup.py install
     $ # or
-    $ python2.7 setup.py install --install-scripts=/usr/bin
+    $ python3.4 setup.py install --install-scripts=/usr/bin
 
