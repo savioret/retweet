@@ -22,7 +22,7 @@ CLASSIFIERS = [
     'Environment :: Console',
     'License :: OSI Approved :: GNU General Public License (GPL)',
     'Operating System :: POSIX :: Linux',
-    'Programming Language :: Python :: 2.7'
+    'Programming Language :: Python :: 3.4'
 ]
 
 setup(

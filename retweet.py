@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 from retweet.main import Main
@@ -8,3 +8,6 @@ class Retweet(object):
     def __init__(self):
         '''Constructor of the Retweet class'''
         Main()
+
+if __name__ == '__main__':
+    Main()
