@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
-import ConfigParser
+import configparser
 import os.path
 import sys
 import tweepy
 
 from retweet.waitamoment import WaitAMoment
+from retweet.cliparse import CliParse
 
 class Main(object):
     '''Main class'''
@@ -16,16 +17,10 @@ class Main(object):
         access_token = ''
         access_token_secret = ''
         self.lasttweetidfile = 'lastsenttweetid'
-        pathtoconf = sys.argv[-1]
-        # checks for the path to the configuration
-        if not os.path.exists(pathtoconf):
-            print('the path you provided for yaspe configuration file does not exists')
-            sys.exit(1)
-        if not os.path.isfile(pathtoconf):
-            print('the path you provided for yaspe configuration is not a file')
-            sys.exit(1)
+        rtargs = CliParse()
+        pathtoconf = rtargs.configfile
         # read the configuration file
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         try:
             with open(pathtoconf) as conffile:
                 config.readfp(conffile)
@@ -36,7 +31,7 @@ class Main(object):
                     access_token = config.get('main','access_token')
                     access_token_secret = config.get('main','access_token_secret')
                     self.lasttweetidfile = config.get('main','last_sent_tweet_id_file')
-        except (ConfigParser.Error, IOError, OSError) as err:
+        except (configparser.Error, IOError, OSError) as err:
             print(err)
             sys.exit(1)
 
