@@ -7,15 +7,15 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
 
 * Install Retweet from PyPI
 
-        # pip install retweet
+        # pip3 install retweet
 
 * Install Retweet from sources
 
-        # tar zxvf retweet-0.1.tar.gz
+        # tar zxvf retweet-0.2.tar.gz
         # cd retweet
-        # python2.7 setup.py install
+        # python3.4 setup.py install
         # # or
-        # python2.7 setup.py install --install-scripts=/usr/bin
+        # python3.4 setup.py install --install-scripts=/usr/bin
 
 ### Use Retweet
 
