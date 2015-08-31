@@ -35,6 +35,7 @@ class Main(object):
         access_token = ''
         access_token_secret = ''
         self.lasttweetidfile = 'lastsenttweetid'
+        # parse the command line
         rtargs = CliParse()
         pathtoconf = rtargs.configfile
         # read the configuration file
