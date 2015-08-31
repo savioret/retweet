@@ -25,7 +25,7 @@ from retweet.cliparse import CliParse
 class TestRetweet(unittest.TestCase):
     '''TestRetweet class'''
 
-    def test_retweet_cliparse_CliParse_configfile(self):
+    def test_getconfigfile(self):
         '''Test the AppLoggerclass'''
         filepath = './tests.py'
         sys.argv[-1] = filepath
