@@ -12,10 +12,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+# Setup for Retweet
 '''Setup for Retweet'''
 
 from setuptools import setup
-import os.path
 
 CLASSIFIERS = [
     'Intended Audience :: End Users/Desktop',

@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+
+# Main class
+'''Main class'''
+
 import configparser
 import os.path
 import sys
@@ -6,6 +10,7 @@ import tweepy
 
 from retweet.waitamoment import WaitAMoment
 from retweet.cliparse import CliParse
+
 
 class Main(object):
     '''Main class'''
@@ -25,12 +30,12 @@ class Main(object):
             with open(pathtoconf) as conffile:
                 config.readfp(conffile)
                 if config.has_section('main'):
-                    self.user_to_retweet = config.get('main','screen_name_of_the_user_to_retweet')
-                    consumer_key = config.get('main','consumer_key')
-                    consumer_secret = config.get('main','consumer_secret')
-                    access_token = config.get('main','access_token')
-                    access_token_secret = config.get('main','access_token_secret')
-                    self.lasttweetidfile = config.get('main','last_sent_tweet_id_file')
+                    self.user_to_retweet = config.get('main', 'screen_name_of_the_user_to_retweet')
+                    consumer_key = config.get('main', 'consumer_key')
+                    consumer_secret = config.get('main', 'consumer_secret')
+                    access_token = config.get('main', 'access_token')
+                    access_token_secret = config.get('main', 'access_token_secret')
+                    self.lasttweetidfile = config.get('main', 'last_sent_tweet_id_file')
         except (configparser.Error, IOError, OSError) as err:
             print(err)
             sys.exit(1)
@@ -43,7 +48,7 @@ class Main(object):
         self.main()
 
     def main(self):
-        '''lalalal'''
+        '''Main of the Main class'''
         # get the 20 last tweets
         lasttweets = self.api.user_timeline(self.user_to_retweet)
 
