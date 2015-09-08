@@ -76,7 +76,7 @@ class Main(object):
                         print("tweet {} sent!".format(i))
                 except (tweepy.error.TweepError) as err:
                     print("{}".format(err))
-                WaitAMoment()
+                WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
             # if we really sent tweets, store the last one
             if len(tweetstosend) != 0:
                 with open(self.cfgvalues['lasttweetidfile'], 'w') as desc:
