@@ -46,6 +46,8 @@ class ConfParse(object):
                     self.access_token = config.get('main', 'access_token')
                     self.access_token_secret = config.get('main', 'access_token_secret')
                     self.retweets = config.get('main', 'retweets')
+                    self.waitminsecs = config.get('main', 'waitminsecs')
+                    self.waitmaxsecs = config.get('main', 'waitmaxsecs')
                     self.lasttweetidfile = config.get('main', 'last_sent_tweet_id_file')
         except (configparser.Error, IOError, OSError) as err:
             print(err)
@@ -55,6 +57,16 @@ class ConfParse(object):
         except ValueError as err:
             print(err)
             self.retweets = 0
+        try:
+            self.waitminsecs = int(self.waitminsecs)
+        except ValueError as err:
+            print(err)
+            self.waitminsecs = 60
+        try:
+            self.waitmaxsecs = int(self.waitmaxsecs)
+        except ValueError as err:
+            print(err)
+            self.waitmaxsecs = 600
 
     @property
     def confvalues(self):
@@ -65,4 +77,6 @@ class ConfParse(object):
                 'access_token': self.access_token,
                 'access_token_secret': self.access_token_secret,
                 'retweets': self.retweets,
+                'waitminsecs': self.waitminsecs,
+                'waitminsecs': self.waitmaxsecs,
                 'lasttweetidfile': self.lasttweetidfile}
