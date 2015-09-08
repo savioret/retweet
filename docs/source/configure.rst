@@ -20,4 +20,6 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
 - access_token: the Twitter access token key (see your apps.twitter.com webpage)
 - access_token_secret: the Twitter access token secret key (see your apps.twitter.com webpage)
 - retweets: the minimal number of retweets the tweet needs to have in order we also retweet it
+- waitminsecs: the minimal number of seconds to wait after processing a tweet
+- waitmaxsecs: the maximal number of seconds to wait after processing a tweet
 - last_sent_tweet_id_file: the file having the last sent tweet id in it (e.g /tmp/lastsenttweet)
