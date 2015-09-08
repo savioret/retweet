@@ -11,7 +11,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
 
 * Install Retweet from sources
 
-        # tar zxvf retweet-0.2.tar.gz
+        # tar zxvf retweet-0.3.tar.gz
         # cd retweet
         # python3.4 setup.py install
         # # or
@@ -27,6 +27,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
         consumer_secret=8Cmljklzerkhfer4hlj3ljl2hfvc123rezrfsdctpokaelzerp
         access_token=213416590-jgJnrJG5gz132nzerl5zerwi0ahmnwkfJFN9nr3j
         access_token_secret=3janlPMqDKlunJ4Hnr90k2bnfk3jfnwkFjeriFZERj32Z
+        retweets=0
         last_sent_tweet_id_file=lastsenttweetid
 
 * Launch Retweet
