@@ -38,7 +38,7 @@ class ConfParse(object):
         config = configparser.ConfigParser()
         try:
             with open(self.pathtoconf) as conffile:
-                config.readfp(conffile)
+                config.read_file(conffile)
                 if config.has_section('main'):
                     self.user_to_retweet = config.get('main', 'screen_name_of_the_user_to_retweet')
                     self.consumer_key = config.get('main', 'consumer_key')
