@@ -42,6 +42,8 @@ class TestRetweet(unittest.TestCase):
                                             'access_token': '1370158707-m8eN2YcfVcKGfWmVLERDGMd1UPKHVPzAQHoP7qa',
                                             'access_token_secret': 'aB74LfWy551sRTU49buGE6YXIukY74TmBK6JLECeOA5ta',
                                             'retweets': 0,
+                                            'waitminsecs': 2,
+                                            'waitmaxsecs': 3,
                                             'lasttweetidfile': 'lastsenttweet'})
 
 ################################################################
