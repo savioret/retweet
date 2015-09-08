@@ -78,5 +78,5 @@ class ConfParse(object):
                 'access_token_secret': self.access_token_secret,
                 'retweets': self.retweets,
                 'waitminsecs': self.waitminsecs,
-                'waitminsecs': self.waitmaxsecs,
+                'waitmaxsecs': self.waitmaxsecs,
                 'lasttweetidfile': self.lasttweetidfile}
