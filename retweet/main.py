@@ -51,6 +51,7 @@ class Main(object):
         # get the 20 last tweets
         lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
 
+        # check if retweet already ran
         if os.path.exists(self.cfgvalues['lasttweetidfile']) and os.path.isfile(self.cfgvalues['lasttweetidfile']):
             # a file with the last sent tweet id exists, using it
             with open(self.cfgvalues['lasttweetidfile']) as desc:
@@ -69,8 +70,10 @@ class Main(object):
             print("tweets to send:{}".format(' '.join([str(j) for j in tweetstosend])))
             for i in tweetstosend:
                 try:
-                    self.api.retweet(i)
-                    print("tweet {} sent!".format(i))
+                    # test if it was retweeted enough to be retweeted by me
+                    if len(self.api.retweets(i)) >= self.cfgvalues['retweets']:
+                        self.api.retweet(i)
+                        print("tweet {} sent!".format(i))
                 except (tweepy.error.TweepError) as err:
                     print("{}".format(err))
                 WaitAMoment()
