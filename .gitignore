@@ -1,5 +1,5 @@
 *.swp
 retweet/__pycache__/
 lastsenttweetid
-retweet.ini
+./retweet.ini
 lastsenttweet
