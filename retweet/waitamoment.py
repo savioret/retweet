@@ -19,10 +19,10 @@ from random import randint
 
 class WaitAMoment:
     '''Wait a moment before going on'''
-    def __init__(self):
+    def __init__(self, waitminsecs, waitmaxsecs):
         '''Constructor of the WaitAMoment class'''
-        self.min = 60
-        self.max = 600
+        self.min = waitminsecs
+        self.max = waitmaxsecs
         self.main()
 
     def main(self):
