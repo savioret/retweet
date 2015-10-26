@@ -44,7 +44,7 @@ class TestRetweet(unittest.TestCase):
                                             'retweets': 0,
                                             'waitminsecs': 2,
                                             'waitmaxsecs': 3,
-                                            'lasttweetidfile': 'lastsenttweet'})
+                                            'sqlitepath': '/var/lib/retweet/retweet.db'})
 
 ################################################################
 #
