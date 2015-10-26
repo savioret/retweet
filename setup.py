@@ -28,7 +28,7 @@ CLASSIFIERS = [
 
 setup(
     name='retweet',
-    version='0.3',
+    version='0.4',
     license='GNU GPL v3',
     description='twitter bot to retweet all tweets from a user',
     long_description='twitter bot to retweet all tweets from a user',
