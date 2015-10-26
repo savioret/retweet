@@ -28,7 +28,6 @@ class ConfParse(object):
         self.consumer_secret = ''
         access_token = ''
         self.access_token_secret = ''
-        self.lasttweetidfile = 'lastsenttweetid'
         self.pathtoconf = pathtoconf
         self.main()
 
@@ -48,7 +47,9 @@ class ConfParse(object):
                     self.retweets = config.get('main', 'retweets')
                     self.waitminsecs = config.get('main', 'waitminsecs')
                     self.waitmaxsecs = config.get('main', 'waitmaxsecs')
-                    self.lasttweetidfile = config.get('main', 'last_sent_tweet_id_file')
+                if config.has_section('sqlite'):
+                    self.sqlitepath = config.get('sqlite', 'sqlitepath')
+
         except (configparser.Error, IOError, OSError) as err:
             print(err)
             sys.exit(1)
@@ -79,4 +80,4 @@ class ConfParse(object):
                 'retweets': self.retweets,
                 'waitminsecs': self.waitminsecs,
                 'waitmaxsecs': self.waitmaxsecs,
-                'lasttweetidfile': self.lasttweetidfile}
+                'sqlitepath': self.sqlitepath,}

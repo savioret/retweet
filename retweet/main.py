@@ -21,9 +21,10 @@ import os.path
 import sys
 import tweepy
 
-from retweet.waitamoment import WaitAMoment
 from retweet.cliparse import CliParse
 from retweet.confparse import ConfParse
+from retweet.tweetwasposted import TweetWasPosted
+from retweet.waitamoment import WaitAMoment
 
 
 class Main(object):
@@ -50,34 +51,31 @@ class Main(object):
         '''Main of the Main class'''
         # get the 20 last tweets
         lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
-
-        # check if retweet already ran
-        if os.path.exists(self.cfgvalues['lasttweetidfile']) and os.path.isfile(self.cfgvalues['lasttweetidfile']):
-            # a file with the last sent tweet id exists, using it
-            with open(self.cfgvalues['lasttweetidfile']) as desc:
-                lasttweetid = int(desc.read())
-            print("last sent tweet:{}".format(lasttweetid))
-        else:
-            # no previously sent tweet, get the first one (last of the list)
-            lasttweetid = lasttweets[-1].id
+        # see if the last tweet of twitter api was sent already
+        lasttweetid = lasttweets[-1].id
+        self.twp = TweetWasPosted(self.cfgvalues)
         # extract the last 20 tweet ids
         lasttweetids = [tweet.id for tweet in lasttweets]
         lasttweetids.reverse()
-        print("last tweets:{}".format(' '.join([str(j) for j in lasttweetids])))
-        if lasttweetid in lasttweetids:
-            tweetstosend = lasttweetids[lasttweetids.index(lasttweetid):]
-            tweetstosend.remove(lasttweetid)
-            print("tweets to send:{}".format(' '.join([str(j) for j in tweetstosend])))
-            for i in tweetstosend:
-                try:
-                    # test if it was retweeted enough to be retweeted by me
-                    if len(self.api.retweets(i)) >= self.cfgvalues['retweets']:
-                        self.api.retweet(i)
-                        print("tweet {} sent!".format(i))
-                except (tweepy.error.TweepError) as err:
-                    print("{}".format(err))
+        tweetstosend = []
+        # test if the last 20 tweets were posted
+        for lasttweet in lasttweetids:
+            if not self.twp.wasposted(lasttweet):
+                self.sendthetweet(lasttweet)
+        sys.exit(0)
+
+    def sendthetweet(self, tweet):
+        '''send the tweet'''
+        try:
+            # test if it was retweeted enough to be retweeted by me
+            if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
+                self.api.retweet(tweet)
+                print("tweet {} sent!".format(tweet))
+        except (tweepy.error.TweepError) as err:
+            print("{}".format(err))
+            print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
+        finally:
+            # now store the tweet
+            if not self.twp.wasposted(tweet):
+                self.twp.storetweet(tweet)
                 WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
-            # if we really sent tweets, store the last one
-            if len(tweetstosend) != 0:
-                with open(self.cfgvalues['lasttweetidfile'], 'w') as desc:
-                    desc.write(str(tweetstosend[-1]))
