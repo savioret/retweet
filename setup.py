@@ -40,5 +40,5 @@ setup(
     packages=['retweet'],
     #data_files=[(os.path.join('share', 'man', 'man1'), ['man/retweet.1'])],
     scripts=['scripts/retweet'],
-    install_requires=['tweepy>=3.3.0'],
+    install_requires=['tweepy>=3.3.0', 'sqlalchemy'],
 )
