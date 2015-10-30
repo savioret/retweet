@@ -12,7 +12,7 @@ Vcs-Browser: http://anonscm.debian.org/viewvc/python-apps/packages/retweet/trunk
 
 Package: retweet
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}
+Depends: ${python3:Depends}, ${misc:Depends}, python3-tweepy
 Description: Simple twitter bot to retweet
  Retweet automatically retweets tweets from a Twitter account to
  another one. It also supports a range of criterias a tweet must
