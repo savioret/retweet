@@ -71,8 +71,8 @@ class Main(object):
             if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
                 # test if the tweet has a hashtag for not retweeting it
                 if not self.notretweethashes(tweet):
-                    #self.api.retweet(tweet)
-                    print("tweet {} sent!".format(tweet))
+                    self.api.retweet(tweet)
+                    #print("tweet {} sent!".format(tweet))
         except (tweepy.error.TweepError) as err:
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
