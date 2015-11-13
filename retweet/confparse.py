@@ -48,10 +48,11 @@ class ConfParse(object):
                     self.retweets = config.get('main', 'retweets')
                     self.waitminsecs = config.get('main', 'waitminsecs')
                     self.waitmaxsecs = config.get('main', 'waitmaxsecs')
-                    dontretweethashes = config.get('main', 'do_not_retweet_hashes')
-                    if dontretweethashes:
-                        hashes = [i for i in dontretweethashes if i != '']
-                        self.dontretweethashes = hashes
+                    if config.has_option('main', 'do_not_retweet_hashes'):
+                        dontretweethashes = config.get('main', 'do_not_retweet_hashes')
+                        if dontretweethashes:
+                            hashes = [i for i in dontretweethashes.split(',') if i != '']
+                            self.dontretweethashes = hashes
                 if config.has_section('sqlite'):
                     self.sqlitepath = config.get('sqlite', 'sqlitepath')
 
