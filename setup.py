@@ -16,6 +16,8 @@
 # Setup for Retweet
 '''Setup for Retweet'''
 
+import os.path
+
 from setuptools import setup
 
 CLASSIFIERS = [
