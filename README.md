@@ -11,7 +11,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
 
 * Install Retweet from sources
 
-        # tar zxvf retweet-0.4.tar.gz
+        # tar zxvf retweet-0.5.tar.gz
         # cd retweet
         # python3.4 setup.py install
         # # or
@@ -30,6 +30,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
         retweets=0
         waitminsecs=60
         waitmaxsecs=600
+        do_not_retweet_hashes=dnr,
 
         [sqlite]
         sqlitepath=/var/lib/retweet/retweet.db
