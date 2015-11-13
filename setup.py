@@ -38,7 +38,7 @@ setup(
     url='https://github.com/chaica/retweet',
     download_url='https://github.com/chaica/retweet',
     packages=['retweet'],
-    #data_files=[(os.path.join('share', 'man', 'man1'), ['man/retweet.1'])],
+    data_files=[(os.path.join('share', 'man', 'man1'), ['man/retweet.1'])],
     scripts=['scripts/retweet'],
     install_requires=['tweepy>=3.3.0', 'sqlalchemy'],
 )
