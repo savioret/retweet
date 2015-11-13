@@ -29,6 +29,7 @@ class ConfParse(object):
         access_token = ''
         self.access_token_secret = ''
         self.pathtoconf = pathtoconf
+        self.dontretweethashes = []
         self.main()
 
     def main(self):
@@ -47,6 +48,10 @@ class ConfParse(object):
                     self.retweets = config.get('main', 'retweets')
                     self.waitminsecs = config.get('main', 'waitminsecs')
                     self.waitmaxsecs = config.get('main', 'waitmaxsecs')
+                    dontretweethashes = config.get('main', 'do_not_retweet_hashes')
+                    if dontretweethashes:
+                        hashes = [i for i in dontretweethashes if i != '']
+                        self.dontretweethashes = hashes
                 if config.has_section('sqlite'):
                     self.sqlitepath = config.get('sqlite', 'sqlitepath')
 
@@ -80,4 +85,5 @@ class ConfParse(object):
                 'retweets': self.retweets,
                 'waitminsecs': self.waitminsecs,
                 'waitmaxsecs': self.waitmaxsecs,
-                'sqlitepath': self.sqlitepath,}
+                'sqlitepath': self.sqlitepath,
+                'dontretweethashes': self.dontretweethashes}
