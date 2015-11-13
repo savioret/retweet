@@ -17,11 +17,13 @@
 # Unit tests for Retweet
 '''Unit tests for Retweet '''
 
+import datetime
 import sys
 import unittest
 
 from retweet.cliparse import CliParse
 from retweet.confparse import ConfParse
+from retweet.waitamoment import WaitAMoment
 
 class TestRetweet(unittest.TestCase):
     '''TestRetweet class'''
@@ -44,7 +46,28 @@ class TestRetweet(unittest.TestCase):
                                             'retweets': 0,
                                             'waitminsecs': 2,
                                             'waitmaxsecs': 3,
-                                            'sqlitepath': '/var/lib/retweet/retweet.db'})
+                                            'sqlitepath': '/var/lib/retweet/retweet.db',
+                                            'dontretweethashes': ['dnr']})
+    def test_getconfigvarsnodnr(self):
+        '''Test the ConfParse class'''
+        confp = ConfParse('tests/getconfigvars/retweet-nodnr.ini')
+        self.assertEqual(confp.confvalues, {'user_to_retweet': 'journalduhacker',
+                                            'consumer_key': '4s3nOBU7hUkPrTqeWzw6lxzC3',
+                                            'consumer_secret': 'aoWjhD7UQcXfxipa2ufkypqiUle9cF0ZlaOngiOAiJyFb23Ftb',
+                                            'access_token': '1370158707-m8eN2YcfVcKGfWmVLERDGMd1UPKHVPzAQHoP7qa',
+                                            'access_token_secret': 'aB74LfWy551sRTU49buGE6YXIukY74TmBK6JLECeOA5ta',
+                                            'retweets': 0,
+                                            'waitminsecs': 2,
+                                            'waitmaxsecs': 3,
+                                            'sqlitepath': '/var/lib/retweet/retweet.db',
+                                            'dontretweethashes': []})
+    def test_waitamoment(self):
+        '''Test WaitAMoment class'''
+        before = datetime.datetime.now()
+        wam = WaitAMoment(1,2)
+        after = datetime.datetime.now()
+        res = after - before
+        self.assertTrue(res.seconds >= 1)
 
 ################################################################
 #
