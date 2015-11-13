@@ -69,6 +69,31 @@ class TestRetweet(unittest.TestCase):
         res = after - before
         self.assertTrue(res.seconds >= 1)
 
+
+#######################################################################################
+#
+# Testing the consistent given version of the software both in setup.py and cliparse.py
+#
+#######################################################################################
+
+    def test_versionconsistency(self):
+        '''test the consistency of the version of the software
+           in both setup.py and README.MD
+        '''
+        with open('setup.py') as setuppy:
+            setuppycode = setuppy.readlines()
+        with open('README.md') as readme:
+            readmecode = readme.readlines()
+        for line in setuppycode:
+            if 'version=' in line:
+                setuppyversion = line.split("'")[1]
+                break
+        for line in readmecode:
+            if 'retweet-' in line:
+                readmeversion = line.split('retweet-')[1].split(".tar.gz")[0]
+                break
+        self.assertEqual(setuppyversion, readmeversion)
+
 ################################################################
 #
 # End of the unit tests
