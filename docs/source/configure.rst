@@ -12,6 +12,7 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
     access_token=213416590-jgJnrJG5gz132nzerl5zerwi0ahmnwkfJFN9nr3j
     access_token_secret=3janlPMqDKlunJ4Hnr90k2bnfk3jfnwkFjeriFZERj32Z
     retweets = 0
+    do_not_retweet_hashes=dnr,
 
     [sqlite]
     sqlitepath=/var/lib/retweet/retweet.db
@@ -25,3 +26,4 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
 - waitminsecs: the minimal number of seconds to wait after processing a tweet
 - waitmaxsecs: the maximal number of seconds to wait after processing a tweet
 - sqlitepath: the path to the sqlite3 database file storing the already sent tweet ids
+- do_not_retweet_hashes: do not retweet if one of the hashtags in this list is in the text of the tweet
