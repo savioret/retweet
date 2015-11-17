@@ -30,6 +30,7 @@ class ConfParse(object):
         self.access_token_secret = ''
         self.pathtoconf = pathtoconf
         self.dontretweethashes = []
+        self.onlyiftags = []
         self.main()
 
     def main(self):

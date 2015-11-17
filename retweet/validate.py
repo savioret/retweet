@@ -68,8 +68,11 @@ class Validate(object):
     def retweetonlyifhashtags(self, tweet):
         '''retweet only if the tweet has the following hashtag'''
         found = False
-        # check if the current tweet contains one of the hashtags to be retweeted
-        for i in self.cfgvalues['onlyifhashtags']:
-            if '#{}'.format(i) in self.api.get_status(tweet).text:
-                found = True
+        if self.cfgvalues['onlyifhashtags']:
+            # check if the current tweet contains one of the hashtags to be retweeted
+            for i in self.cfgvalues['onlyifhashtags']:
+                if '#{}'.format(i) in self.api.get_status(tweet).text:
+                    found = True
+        else:
+            found = True
         return found
