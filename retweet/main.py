@@ -24,6 +24,7 @@ import tweepy
 from retweet.cliparse import CliParse
 from retweet.confparse import ConfParse
 from retweet.tweetwasposted import TweetWasPosted
+from retweet.validate import Validate
 from retweet.waitamoment import WaitAMoment
 
 
@@ -37,6 +38,7 @@ class Main(object):
         # read the configuration file
         cfgparse = ConfParse(pathtoconf)
         self.cfgvalues = cfgparse.confvalues
+        self.twp = TweetWasPosted(self.cfgvalues)
 
         # activate the twitter api
         self.auth = tweepy.OAuthHandler(self.cfgvalues['consumer_key'],
@@ -53,7 +55,6 @@ class Main(object):
         lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
         # see if the last tweet of twitter api was sent already
         lasttweetid = lasttweets[-1].id
-        self.twp = TweetWasPosted(self.cfgvalues)
         # extract the last 20 tweet ids
         lasttweetids = [tweet.id for tweet in lasttweets]
         lasttweetids.reverse()
@@ -61,32 +62,5 @@ class Main(object):
         # test if the last 20 tweets were posted
         for lasttweet in lasttweetids:
             if not self.twp.wasposted(lasttweet):
-                self.sendthetweet(lasttweet)
+                Validate(self.cfgvalues, self.api, lasttweet)
         sys.exit(0)
-
-    def sendthetweet(self, tweet):
-        '''send the tweet'''
-        try:
-            # test if it was retweeted enough to be retweeted by me
-            if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
-                # test if the tweet has a hashtag for not retweeting it
-                if not self.notretweethashes(tweet):
-                    self.api.retweet(tweet)
-                    #print("tweet {} sent!".format(tweet))
-        except (tweepy.error.TweepError) as err:
-            print("{}".format(err))
-            print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
-        finally:
-            # now store the tweet
-            if not self.twp.wasposted(tweet):
-                self.twp.storetweet(tweet)
-                WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
-
-    def notretweethashes(self, tweet):
-        '''check if the tweet has a hash for not retweeting'''
-        found = False
-        # check if the current tweet contains a do-not-retweet hash
-        for i in self.cfgvalues['dontretweethashes']:
-            if '#{}'.format(i) in self.api.get_status(tweet).text:
-                found = True
-        return found
