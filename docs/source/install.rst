@@ -7,6 +7,14 @@ From PyPI
 From sources
 ^^^^^^^^^^^^
 * You need at least Python 3.4.
+* On some Linux Distribution setuptools package does not come with default python install, you need to install it.
+  
+    $ wget https://bootstrap.pypa.io/ez_setup.py -O - | sudo python
+	  
+	  * Alternatively, Setuptools may be installed to a user-local path:
+	  
+	       $ wget https://bootstrap.pypa.io/ez_setup.py -O - | python - --user
+
 * Untar the tarball and go to the source directory with the following commands::
 
     $ tar zxvf retweet-0.6.tar.gz
