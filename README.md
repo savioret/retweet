@@ -9,9 +9,12 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
 
         # pip3 install retweet
 
-* Install Retweet from sources
+* Install Retweet from sources    
+  *(see the installation guide for full details)
+  [Installation Guide](http://retweet.readthedocs.org/en/latest/install.html)*
+  
 
-        # tar zxvf retweet-0.6.tar.gz
+        # tar zxvf retweet-0.7.tar.gz
         # cd retweet
         # python3.4 setup.py install
         # # or

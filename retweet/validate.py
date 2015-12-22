@@ -30,21 +30,12 @@ class Validate(object):
         '''send the tweet'''
         self.cfgvalues = cfgvalues
         self.api = api
-        hasnotretweethasthags = False
-        hasonlyifhashtags = False
         self.twp = TweetWasPosted(self.cfgvalues)
         try:
             # test if it was retweeted enough to be retweeted by me
             if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
-                # test if the tweet has a hashtag for not retweeting it
-                if not self.notretweethashes(tweet):
-                    # if the tweet does not have one of the stop hashtags, send it
-                    hasnotretweethasthags = True
-                if self.retweetonlyifhashtags(tweet):
-                    # if the tweet has one of the tags which allows retweeting it, send it
-                    hasonlyifhashtags = True
                 # send the tweet if all checks are ok
-                if hasnotretweethasthags and hasonlyifhashtags:
+                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet):
                     self.api.retweet(tweet)
                     #print("tweet {} sent!".format(tweet))
         except (tweepy.error.TweepError) as err:
