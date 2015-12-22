@@ -45,8 +45,8 @@ class Validate(object):
                     hasonlyifhashtags = True
                 # send the tweet if all checks are ok
                 if hasnotretweethasthags and hasonlyifhashtags:
-                    #self.api.retweet(tweet)
-                    print("tweet {} sent!".format(tweet))
+                    self.api.retweet(tweet)
+                    #print("tweet {} sent!".format(tweet))
         except (tweepy.error.TweepError) as err:
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
