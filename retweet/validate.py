@@ -38,7 +38,7 @@ class Validate(object):
             # test if it was retweeted enough to be retweeted by me
             if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
                 # send the tweet if all checks are ok
-                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet) and self.retweetonlyifolderthan(tweet):
+                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet) and self.retweetonlyifolderthan(tweet) and self.retweetonlyifoyoungerthan(tweet):
                     self.storeit = True
                     self.api.retweet(tweet)
                     #print("tweet {} sent!".format(tweet))
@@ -89,4 +89,25 @@ class Validate(object):
                     send = False
             except ValueError:
                 send = False
+        else:
+            send = True
+        return send
+
+    def retweetonlyifoyoungerthan(self, tweet):
+        '''retweet only if the tweet is younger than a number of minutes'''
+        send = False
+        if self.cfgvalues['youngerthan']:
+            # check if the tweet is younger than a number of minutes
+            now = datetime.datetime.now()
+            tweetbirth = self.api.get_status(tweet).created_at
+            lapse = now - tweetbirth
+            try:
+                if (lapse.seconds / 60) < self.cfgvalues['youngerthan']:
+                    send = True
+                else:
+                    send = False
+            except ValueError:
+                send = False
+        else:
+            send = True
         return send
