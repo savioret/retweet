@@ -59,6 +59,8 @@ class ConfParse(object):
                         if onlyiftags:
                             hashtags = [i for i in onlyiftags.split(',') if i != '']
                             self.onlyiftags = hashtags
+                    if config.has_option('main', 'older_than'):
+                        self.olderthan = config.get('main', 'older_than')
                 if config.has_section('sqlite'):
                     self.sqlitepath = config.get('sqlite', 'sqlitepath')
 
@@ -80,6 +82,11 @@ class ConfParse(object):
         except ValueError as err:
             print(err)
             self.waitmaxsecs = 600
+        try:
+            self.olderthan = int(self.olderthan)
+        except ValueError as err:
+            print(err)
+            self.waitmaxsecs = 0
 
     @property
     def confvalues(self):
@@ -94,4 +101,5 @@ class ConfParse(object):
                 'waitmaxsecs': self.waitmaxsecs,
                 'sqlitepath': self.sqlitepath,
                 'dontretweethashes': self.dontretweethashes,
-                'onlyifhashtags': self.onlyiftags}
+                'onlyifhashtags': self.onlyiftags,
+                'olderthan': self.olderthan}

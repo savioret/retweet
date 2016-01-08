@@ -16,8 +16,10 @@
 # Validate class
 '''Validate class'''
 
+import datetime
 import os.path
 import sys
+
 import tweepy
 
 from retweet.tweetwasposted import TweetWasPosted
@@ -31,19 +33,23 @@ class Validate(object):
         self.cfgvalues = cfgvalues
         self.api = api
         self.twp = TweetWasPosted(self.cfgvalues)
+        self.storeit = False
         try:
             # test if it was retweeted enough to be retweeted by me
             if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
                 # send the tweet if all checks are ok
-                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet):
+                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet) and self.retweetonlyifolderthan(tweet):
+                    self.storeit = True
                     self.api.retweet(tweet)
                     #print("tweet {} sent!".format(tweet))
+                else:
+                    self.storeit = False
         except (tweepy.error.TweepError) as err:
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
         finally:
             # now store the tweet
-            if not self.twp.wasposted(tweet):
+            if not self.twp.wasposted(tweet) and self.storeit:
                 self.twp.storetweet(tweet)
                 WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
@@ -67,3 +73,20 @@ class Validate(object):
         else:
             found = True
         return found
+
+    def retweetonlyifolderthan(self, tweet):
+        '''retweet only if the tweet is older than a number of minutes'''
+        send = False
+        if self.cfgvalues['olderthan']:
+            # check if the tweet is older than a number of minutes
+            now = datetime.datetime.now()
+            tweetbirth = self.api.get_status(tweet).created_at
+            lapse = now - tweetbirth
+            try:
+                if (lapse.seconds / 60) > self.cfgvalues['olderthan']:
+                    send = True
+                else:
+                    send = False
+            except ValueError:
+                send = False
+        return send
