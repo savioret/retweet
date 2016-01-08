@@ -14,6 +14,8 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
     retweets = 0
     do_not_retweet_hashtags=dnr,
     only_if_hashtags=python,
+    ; only retweet tweets older than n minutes
+    older_than=60
 
     [sqlite]
     sqlitepath=/var/lib/retweet/retweet.db
@@ -29,3 +31,4 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
 - sqlitepath: the path to the sqlite3 database file storing the already sent tweet ids
 - do_not_retweet_hashtags: do not retweet if one of the hashtags in this list is in the text of the tweet
 - only_if_hashtags: only retweet tweets having one of the hashtags of the list
+- older_than: only retweet tweets older than a number of minutes
