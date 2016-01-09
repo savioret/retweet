@@ -79,7 +79,7 @@ class Validate(object):
         send = False
         if self.cfgvalues['olderthan']:
             # check if the tweet is older than a number of minutes
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.utcnow()
             tweetbirth = self.api.get_status(tweet).created_at
             lapse = now - tweetbirth
             try:
@@ -98,7 +98,7 @@ class Validate(object):
         send = False
         if self.cfgvalues['youngerthan']:
             # check if the tweet is younger than a number of minutes
-            now = datetime.datetime.now(datetime.timezone.utc)
+            now = datetime.datetime.utcnow()
             tweetbirth = self.api.get_status(tweet).created_at
             lapse = now - tweetbirth
             try:
