@@ -28,13 +28,6 @@ from retweet.waitamoment import WaitAMoment
 class TestRetweet(unittest.TestCase):
     '''TestRetweet class'''
 
-    def test_getconfigfile(self):
-        '''Test the CliParse class'''
-        filepath = './tests.py'
-        sys.argv[-1] = filepath
-        clip = CliParse()
-        self.assertEqual(clip.configfile, filepath)
-
     def test_getconfigvars(self):
         '''Test the ConfParse class'''
         confp = ConfParse('tests/getconfigvars/retweet.ini')
@@ -47,7 +40,11 @@ class TestRetweet(unittest.TestCase):
                                             'waitminsecs': 2,
                                             'waitmaxsecs': 3,
                                             'sqlitepath': '/var/lib/retweet/retweet.db',
-                                            'dontretweethashes': ['dnr']})
+                                            'dontretweethashes': ['dnr'],
+                                            'onlyifhashtags': ['python'],
+                                            'youngerthan': 180,
+                                            'olderthan': 60,
+                                            })
     def test_getconfigvarsnodnr(self):
         '''Test the ConfParse class'''
         confp = ConfParse('tests/getconfigvars/retweet-nodnr.ini')
@@ -60,7 +57,11 @@ class TestRetweet(unittest.TestCase):
                                             'waitminsecs': 2,
                                             'waitmaxsecs': 3,
                                             'sqlitepath': '/var/lib/retweet/retweet.db',
-                                            'dontretweethashes': []})
+                                            'dontretweethashes': [],
+                                            'youngerthan': 0,
+                                            'olderthan': 0,
+                                            'onlyifhashtags': [],
+                                            })
     def test_waitamoment(self):
         '''Test WaitAMoment class'''
         before = datetime.datetime.now()
