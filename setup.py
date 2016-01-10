@@ -16,8 +16,10 @@
 # Setup for Retweet
 '''Setup for Retweet'''
 
+# standard library imports
 import os.path
 
+# external library imports
 from setuptools import setup
 
 CLASSIFIERS = [

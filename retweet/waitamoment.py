@@ -14,6 +14,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>
 
 '''Wait a moment before going on'''
+
+# standard library imports
 import time
 from random import randint
 

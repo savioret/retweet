@@ -15,11 +15,13 @@
 
 '''Was this tweet posted before'''
 
+# external library imports
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
+# retweet library imports
 from retweet.senttweets import SentTweets
 
 

@@ -16,12 +16,15 @@
 # Validate class
 '''Validate class'''
 
+# standard library imports
 import datetime
 import os.path
 import sys
 
+# external library imports
 import tweepy
 
+# retweet library imports
 from retweet.tweetwasposted import TweetWasPosted
 from retweet.waitamoment import WaitAMoment
 
