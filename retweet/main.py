@@ -16,11 +16,15 @@
 # Main class
 '''Main class'''
 
+# standard library imports
 import configparser
 import os.path
 import sys
+
+# external library imports
 import tweepy
 
+# retweet imports
 from retweet.cliparse import CliParse
 from retweet.confparse import ConfParse
 from retweet.tweetwasposted import TweetWasPosted
@@ -34,9 +38,9 @@ class Main(object):
         '''Constructor of the Main class'''
         # parse the command line
         rtargs = CliParse()
-        pathtoconf = rtargs.configfile
+        self.args = rtargs.arguments
         # read the configuration file
-        cfgparse = ConfParse(pathtoconf)
+        cfgparse = ConfParse(self.args.pathtoconf)
         self.cfgvalues = cfgparse.confvalues
         self.twp = TweetWasPosted(self.cfgvalues)
 
@@ -51,13 +55,14 @@ class Main(object):
 
     def main(self):
         '''Main of the Main class'''
-        # get the 20 last tweets
         lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
         # see if the last tweet of twitter api was sent already
         lasttweetid = lasttweets[-1].id
         # extract the last 20 tweet ids
         lasttweetids = [tweet.id for tweet in lasttweets]
         lasttweetids.reverse()
+        if self.args.limit:
+            lasttweetids = lasttweetids[(len(lasttweetids) - self.args.limit) :]
         tweetstosend = []
         # test if the last 20 tweets were posted
         for lasttweet in lasttweetids:
