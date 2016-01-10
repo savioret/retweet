@@ -52,7 +52,7 @@ class ConfParse(object):
                     self.retweets = config.get('main', 'retweets')
                     self.waitminsecs = config.get('main', 'waitminsecs')
                     self.waitmaxsecs = config.get('main', 'waitmaxsecs')
-                    if config.has_option('main', 'do_not_retweet_hashes'):
+                    if config.has_option('main', 'do_not_retweet_hashtags'):
                         dontretweethashes = config.get('main', 'do_not_retweet_hashtags')
                         if dontretweethashes:
                             hashes = [i for i in dontretweethashes.split(',') if i != '']
