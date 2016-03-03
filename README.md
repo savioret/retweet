@@ -1,4 +1,4 @@
-[<img src="https://api.travis-ci.org/chaica/retweet.svg?branch=master">](https://travis-ci.org/chaica/retweet)
+[<img src="https://api.travis-ci.org/chaica/retweet.svg?branch=master">](https://travis-ci.org/chaica/retweet)[![Coverage Status](https://coveralls.io/repos/github/chaica/retweet/badge.svg?branch=master)](https://coveralls.io/github/chaica/retweet?branch=master)
 ### Retweet 
 
 Retweet automatically retweets tweets from a Twitter user. Read the documentation in docs/
