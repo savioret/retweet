@@ -44,4 +44,5 @@ setup(
     packages=['retweet'],
     scripts=['scripts/retweet'],
     install_requires=['tweepy>=3.3.0', 'sqlalchemy'],
+    test_suite = 'tests',
 )
