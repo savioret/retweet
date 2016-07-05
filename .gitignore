@@ -1,6 +1,7 @@
+*.pyc
 retweet.db
 *.swp
-retweet/__pycache__/
+__pycache__
 lastsenttweetid
 /retweet.ini
 lastsenttweet
