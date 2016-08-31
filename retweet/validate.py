@@ -44,6 +44,8 @@ class Validate(object):
                 if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet) and self.retweetonlyifolderthan(tweet) and self.retweetonlyifoyoungerthan(tweet):
                     self.storeit = True
                     self.api.retweet(tweet)
+                    if self.cfgvalues['like']:
+                        self.api.create_favorite(tweet)
                     #print("tweet {} sent!".format(tweet))
                 else:
                     self.storeit = False

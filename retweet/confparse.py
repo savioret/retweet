@@ -27,13 +27,17 @@ class ConfParse(object):
         self.user_to_retweet = 'journaldupirate'
         self.consumer_key = ''
         self.consumer_secret = ''
-        access_token = ''
+        self.access_token = ''
         self.access_token_secret = ''
+        self.retweets = 0
+        self.waitminsecs = 1
+        self.waitmaxsecs = 1
         self.pathtoconf = pathtoconf
         self.dontretweethashes = []
         self.onlyiftags = []
         self.olderthan = 0
         self.youngerthan = 0
+        self.like = False
         self.main()
 
     def main(self):
@@ -43,31 +47,51 @@ class ConfParse(object):
         try:
             with open(self.pathtoconf) as conffile:
                 config.read_file(conffile)
-                if config.has_section('main'):
-                    self.user_to_retweet = config.get('main', 'screen_name_of_the_user_to_retweet')
-                    self.consumer_key = config.get('main', 'consumer_key')
-                    self.consumer_secret = config.get('main', 'consumer_secret')
-                    self.access_token = config.get('main', 'access_token')
-                    self.access_token_secret = config.get('main', 'access_token_secret')
-                    self.retweets = config.get('main', 'retweets')
-                    self.waitminsecs = config.get('main', 'waitminsecs')
-                    self.waitmaxsecs = config.get('main', 'waitmaxsecs')
-                    if config.has_option('main', 'do_not_retweet_hashtags'):
-                        dontretweethashes = config.get('main', 'do_not_retweet_hashtags')
+                ### twitter section
+                section = 'twitter'
+                if config.has_section(section):
+                    self.user_to_retweet = config.get(section, 'screen_name_of_the_user_to_retweet')
+                    self.consumer_key = config.get(section, 'consumer_key')
+                    self.consumer_secret = config.get(section, 'consumer_secret')
+                    self.access_token = config.get(section, 'access_token')
+                    self.access_token_secret = config.get(section, 'access_token_secret')
+                ### retweet section
+                section = 'retweet'
+                if config.has_section('retweet'):
+                    self.retweets = config.get(section, 'retweets')
+                    # waitminsec option
+                    if config.has_option(section, 'waitminsecs'):
+                        self.waitminsecs = config.get(section, 'waitminsecs')
+                    # waitmaxsec option
+                    if config.has_option(section, 'waitmaxsecs'):
+                        self.waitmaxsecs = config.get(section, 'waitmaxsecs')
+                    # do_not_retweet_hashtags option
+                    if config.has_option(section, 'do_not_retweet_hashtags'):
+                        dontretweethashes = config.get(section, 'do_not_retweet_hashtags')
                         if dontretweethashes:
                             hashes = [i for i in dontretweethashes.split(',') if i != '']
                             self.dontretweethashes = hashes
-                    if config.has_option('main', 'only_if_hashtags'):
-                        onlyiftags = config.get('main', 'only_if_hashtags')
+                    # only_if_hashtags option
+                    if config.has_option(section, 'only_if_hashtags'):
+                        onlyiftags = config.get(section, 'only_if_hashtags')
                         if onlyiftags:
                             hashtags = [i for i in onlyiftags.split(',') if i != '']
                             self.onlyiftags = hashtags
-                    if config.has_option('main', 'older_than'):
-                        self.olderthan = config.get('main', 'older_than')
-                    if config.has_option('main', 'younger_than'):
-                        self.youngerthan = config.get('main', 'younger_than')
-                if config.has_section('sqlite'):
-                    self.sqlitepath = config.get('sqlite', 'sqlitepath')
+                    # older_than option
+                    if config.has_option(section, 'older_than'):
+                        self.olderthan = config.get(section, 'older_than')
+                    # younger_than option
+                    if config.has_option(section, 'younger_than'):
+                        self.youngerthan = config.get(section, 'younger_than')
+                    # like option
+                    if config.has_option(section, 'like'):
+                        self.like = config.getboolean(section, 'like')
+                ### sqlite section
+                section = 'sqlite'
+                if config.has_section(section):
+                    # sqlitepath option
+                    if config.has_option(section, 'sqlitepath'):
+                        self.sqlitepath = config.get(section, 'sqlitepath')
 
         except (configparser.Error, IOError, OSError) as err:
             print(err)
@@ -81,12 +105,12 @@ class ConfParse(object):
             self.waitminsecs = int(self.waitminsecs)
         except ValueError as err:
             print(err)
-            self.waitminsecs = 60
+            self.waitminsecs = 10
         try:
             self.waitmaxsecs = int(self.waitmaxsecs)
         except ValueError as err:
             print(err)
-            self.waitmaxsecs = 600
+            self.waitmaxsecs = 10
         try:
             self.olderthan = int(self.olderthan)
         except ValueError as err:
@@ -113,4 +137,5 @@ class ConfParse(object):
                 'dontretweethashes': self.dontretweethashes,
                 'onlyifhashtags': self.onlyiftags,
                 'olderthan': self.olderthan,
-                'youngerthan': self.youngerthan}
+                'youngerthan': self.youngerthan,
+                'like': self.like}
