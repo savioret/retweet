@@ -41,6 +41,10 @@ class CliParse(object):
         parser.add_argument('-n', '--dry-run', dest='dryrun',
                             action='store_true', default=False,
                             help='Do not actually feed database and do not send the tweets')
+        parser.add_argument('-v', '--version',
+                            action='version',
+                            version='%(prog)s 0.9',
+                            help='print the version of retweet and exit')
         args = parser.parse_args()
         if not os.path.exists(args.pathtoconf):
             print('the path you provided for yaspe configuration file does not exists')
