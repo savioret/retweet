@@ -32,7 +32,7 @@ CLASSIFIERS = [
 
 setup(
     name='retweet',
-    version='0.8',
+    version='0.9',
     license='GNU GPL v3',
     description='twitter bot to retweet all tweets from a user',
     long_description='twitter bot to retweet all tweets from a user',
@@ -43,6 +43,6 @@ setup(
     download_url='https://github.com/chaica/retweet',
     packages=['retweet'],
     scripts=['scripts/retweet'],
-    install_requires=['tweepy>=3.3.0', 'sqlalchemy'],
+    install_requires=['tweepy>=3.5.0', 'sqlalchemy'],
     test_suite = 'tests',
 )
