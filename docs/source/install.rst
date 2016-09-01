@@ -24,7 +24,7 @@ From sources
 
 * Untar the tarball and go to the source directory with the following commands::
 
-    $ tar zxvf retweet-0.8.tar.gz
+    $ tar zxvf retweet-0.9.tar.gz
     $ cd retweet
 
 * Next, to install Retweet on your computer, type the following command with the root user::

@@ -18,6 +18,7 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
     older_than=60
     ; only retweet tweets younger than n minutes
     younger_than=120
+    like=true
 
     [sqlite]
     sqlitepath=/var/lib/retweet/retweet.db
@@ -35,3 +36,4 @@ In order to configure Retweet, you need to create a retweet.ini file (or any nam
 - only_if_hashtags: only retweet tweets having one of the hashtags of the list
 - older_than: only retweet tweets older than a number of minutes
 - younger_than: only retweet tweets younger than a number of minutes
+- like: like all the retweeted tweets

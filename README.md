@@ -15,7 +15,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
   [Installation Guide](http://retweet.readthedocs.org/en/latest/install.html)*
   
 
-        # tar zxvf retweet-0.8.tar.gz
+        # tar zxvf retweet-0.9.tar.gz
         # cd retweet
         # python3.4 setup.py install
         # # or
@@ -36,6 +36,7 @@ or [read it online](https://retweet.readthedocs.org/en/latest/).
         waitmaxsecs=600
         do_not_retweet_hashtags=dnr,
         only_if_hashtags=python,
+        like=true
 
         [sqlite]
         sqlitepath=/var/lib/retweet/retweet.db
