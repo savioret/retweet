@@ -44,6 +44,7 @@ class TestRetweet(unittest.TestCase):
                                             'onlyifhashtags': ['python'],
                                             'youngerthan': 180,
                                             'olderthan': 60,
+                                            'like': False
                                             })
     def test_getconfigvarsnodnr(self):
         '''Test the ConfParse class'''
@@ -61,6 +62,7 @@ class TestRetweet(unittest.TestCase):
                                             'youngerthan': 0,
                                             'olderthan': 0,
                                             'onlyifhashtags': [],
+                                            'like': False
                                             })
     def test_waitamoment(self):
         '''Test WaitAMoment class'''
