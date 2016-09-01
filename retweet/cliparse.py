@@ -35,9 +35,12 @@ class CliParse(object):
                                 description=retweetdescription,
                                 epilog=retweetepilog)
         parser.add_argument('pathtoconf', metavar='FILE', type=str,
-                           help='the path to the retweet configuration')
+                            help='the path to the retweet configuration')
         parser.add_argument('-l', '--limit', dest='limit', type=int, action='store',
-                           help='the number of status to get from Twitter')
+                            help='the number of status to get from Twitter')
+        parser.add_argument('-n', '--dry-run', dest='dryrun',
+                            action='store_true', default=False,
+                            help='Do not actually feed database and do not send the tweets')
         args = parser.parse_args()
         if not os.path.exists(args.pathtoconf):
             print('the path you provided for yaspe configuration file does not exists')

@@ -67,5 +67,5 @@ class Main(object):
         # test if the last 20 tweets were posted
         for lasttweet in lasttweetids:
             if not self.twp.wasposted(lasttweet):
-                Validate(self.cfgvalues, self.api, lasttweet)
+                Validate(self.cfgvalues, self.args, self.api, lasttweet)
         sys.exit(0)

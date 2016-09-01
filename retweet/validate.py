@@ -31,22 +31,31 @@ from retweet.waitamoment import WaitAMoment
 
 class Validate(object):
     '''Validate class'''
-    def __init__(self, cfgvalues, api, tweet):
+    def __init__(self, cfgvalues, args, api, tweet):
         '''send the tweet'''
-        self.cfgvalues = cfgvalues
         self.api = api
-        self.twp = TweetWasPosted(self.cfgvalues)
+        self.args = args
+        self.cfgvalues = cfgvalues
         self.storeit = False
+        self.tweet = tweet
+        self.twp = TweetWasPosted(self.cfgvalues)
+        self.main()
+
+    def main(self):
+        '''Main of the Validate class'''
         try:
             # test if it was retweeted enough to be retweeted by me
-            if len(self.api.retweets(tweet)) >= self.cfgvalues['retweets']:
+            if len(self.api.retweets(self.tweet)) >= self.cfgvalues['retweets']:
                 # send the tweet if all checks are ok
-                if not self.notretweethashes(tweet) and self.retweetonlyifhashtags(tweet) and self.retweetonlyifolderthan(tweet) and self.retweetonlyifoyoungerthan(tweet):
+                if not self.notretweethashes() and self.retweetonlyifhashtags() and self.retweetonlyifolderthan() and self.retweetonlyifoyoungerthan():
                     self.storeit = True
-                    self.api.retweet(tweet)
-                    if self.cfgvalues['like']:
-                        self.api.create_favorite(tweet)
-                    #print("tweet {} sent!".format(tweet))
+                    if self.args.dryrun:
+                        print("tweet {} sent!".format(self.tweet))
+                    else:
+                        # at last retweet the tweet
+                        self.api.retweet(self.tweet)
+                        if self.cfgvalues['like']:
+                            self.api.create_favorite(self.tweet)
                 else:
                     self.storeit = False
         except (tweepy.error.TweepError) as err:
@@ -54,38 +63,39 @@ class Validate(object):
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
         finally:
             # now store the tweet
-            if not self.twp.wasposted(tweet) and self.storeit:
-                self.twp.storetweet(tweet)
+            if not self.twp.wasposted(self.tweet) and self.storeit:
+                if not self.args.dryrun:
+                    self.twp.storetweet(self.tweet)
                 WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
-    def notretweethashes(self, tweet):
+    def notretweethashes(self):
         '''check if the tweet has a hash for not retweeting'''
         found = False
         # check if the current tweet contains a do-not-retweet hash
         for i in self.cfgvalues['dontretweethashes']:
-            if '#{}'.format(i) in self.api.get_status(tweet).text:
+            if '#{}'.format(i) in self.api.get_status(self.tweet).text:
                 found = True
         return found
 
-    def retweetonlyifhashtags(self, tweet):
+    def retweetonlyifhashtags(self):
         '''retweet only if the tweet has the following hashtag'''
         found = False
         if self.cfgvalues['onlyifhashtags']:
             # check if the current tweet contains one of the hashtags to be retweeted
             for i in self.cfgvalues['onlyifhashtags']:
-                if '#{}'.format(i) in self.api.get_status(tweet).text:
+                if '#{}'.format(i) in self.api.get_status(self.tweet).text:
                     found = True
         else:
             found = True
         return found
 
-    def retweetonlyifolderthan(self, tweet):
+    def retweetonlyifolderthan(self):
         '''retweet only if the tweet is older than a number of minutes'''
         send = False
         if self.cfgvalues['olderthan']:
             # check if the tweet is older than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.api.get_status(tweet).created_at
+            tweetbirth = self.api.get_status(self.tweet).created_at
             lapse = now - tweetbirth
             try:
                 if (lapse.seconds / 60) > self.cfgvalues['olderthan']:
@@ -98,13 +108,13 @@ class Validate(object):
             send = True
         return send
 
-    def retweetonlyifoyoungerthan(self, tweet):
+    def retweetonlyifoyoungerthan(self):
         '''retweet only if the tweet is younger than a number of minutes'''
         send = False
         if self.cfgvalues['youngerthan']:
             # check if the tweet is younger than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.api.get_status(tweet).created_at
+            tweetbirth = self.api.get_status(self.tweet).created_at
             lapse = now - tweetbirth
             try:
                 if (lapse.seconds / 60) < self.cfgvalues['youngerthan']:
