@@ -1,9 +1,9 @@
-# Change Log
+ Change Log
 All notable changes to this project will be documented in this file.
 
 ## [0.9] - 2016-09-02
 ### Added
-- like parameter to like all retweet likes.
+- like parameter to like all retweeted tweets.
 - --dry-run command line option for testing purposes.
 - --version command line option to display current version.
 
