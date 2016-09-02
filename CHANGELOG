@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - --dry-run command line option for testing purposes.
 - --version command line option to display current version.
 
+### Changed
+- split [main] section in configuration file to [twitter] and [retweet] sections.
+
 ## [0.8] - 2016-01-10
 ### Added
 - older_than parameter to retweet only if the tweet is older than a given number of minutes.
