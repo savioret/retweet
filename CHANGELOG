@@ -1,0 +1,54 @@
+# Change Log
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+### Added
+- like parameter to like all retweet likes.
+- --dry-run command line option for testing purposes.
+- --version command line option to display current version.
+
+## [0.8.0] - 2016-01-10
+### Added
+- older_than parameter to retweet only if the tweet is older than a given number of minutes.
+- younger_than parameter to retweet only if the tweet is younger than a given number of minutes.
+- -l or --limit command line option to retrieve only the given number of statuses from Twitter.
+
+## [0.7.0] - 2015-12-22
+### Changed
+- bug fix
+
+## [0.6.0] - 2015-11-19
+### Added
+- only_if_hashtags parameter to retweet only tweets containing one of the hashtags of this list.
+
+### Changed
+- rename do_not_retweet_hashes parameter to do_not_retweet_hashtags for constitency and readability of the configuration.
+
+## [0.5.0] - 2015-11-13
+### Added
+- do_not_retweet_hashtags parameter for not retweeting if a hashtag is in the text of the tweet.
+
+## [0.4.0] - 2015-10-25
+### Added
+- use sqlite database through sqlalchemy to store already sent tweet ids.
+
+## [0.3.0] - 2015-09-08
+### Added
+- retweets parameter to retweet only if a tweet already has been retweeted the number of times indicated by this parameter.
+- waitminsecs parameter for the minimal seconds to wait before processing the next tweets.
+- waitmaxsecs parameter for the maximal seconds to wait before processing the next tweets.
+
+## [0.3.0] - 2015-09-08
+### Added
+- retweets parameter to retweet only if a tweet already has been retweeted the number of times indicated by this parameter.
+- waitminsecs parameter for the minimal seconds to wait before processing the next tweets.
+- waitmaxsecs parameter for the maximal seconds to wait before processing the next tweets.
+
+## [0.2.0] - 2015-08-25
+### Added
+- bump Python version to 3.4.
+- improve pep8 compliance.
+
+## [0.1.0] - 2015-07-30
+### Added
+- initial version.
