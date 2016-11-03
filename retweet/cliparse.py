@@ -47,10 +47,10 @@ class CliParse(object):
                             help='print the version of retweet and exit')
         args = parser.parse_args()
         if not os.path.exists(args.pathtoconf):
-            print('the path you provided for yaspe configuration file does not exists')
+            print('the path you provided for the configuration file does not exists')
             sys.exit(1)
         if not os.path.isfile(args.pathtoconf):
-            print('the path you provided for yaspe configuration is not a file')
+            print('the path you provided for the configuration is not a file')
             sys.exit(1)
         if args.limit:
             if args.limit > 20:
