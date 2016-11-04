@@ -55,17 +55,26 @@ class Main(object):
 
     def main(self):
         '''Main of the Main class'''
-        lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
+        if self.cfgvalues['search_query']:
+            # TODO: Meter un since_id guardado en el sqlite
+            lasttweets = self.api.search(self.cfgvalues['search_query'], rpp=100)
+        else:
+            lasttweets = self.api.user_timeline(self.cfgvalues['user_to_retweet'])
+        
+        # extract the last tweet ids
+        #lasttweetids = [tweet.id for tweet in lasttweets]
+        ordered_tweets = reversed(lasttweets)
         # see if the last tweet of twitter api was sent already
-        lasttweetid = lasttweets[-1].id
-        # extract the last 20 tweet ids
-        lasttweetids = [tweet.id for tweet in lasttweets]
-        lasttweetids.reverse()
+        lasttweetid = ordered_tweets[0]
+        print("Fetching %d tweets"%len(ordered_tweets))
         if self.args.limit:
-            lasttweetids = lasttweetids[(len(lasttweetids) - self.args.limit) :]
+            # take the oldest N
+            ordered_tweets = ordered_tweets[0:self.args.limit]
+            print("Limiting to oldest %d tweets"%len(ordered_tweets))
         tweetstosend = []
-        # test if the last 20 tweets were posted
-        for lasttweet in lasttweetids:
-            if not self.twp.wasposted(lasttweet):
+        # test if the last tweets were posted
+        for lasttweet in ordered_tweets:
+            if not self.twp.wasposted(lasttweet.id):
+                print("Tweet was not posted: ", lasttweet)
                 Validate(self.cfgvalues, self.args, self.api, lasttweet)
         sys.exit(0)
