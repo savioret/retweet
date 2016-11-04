@@ -29,7 +29,7 @@ class CliParse(object):
 
     def main(self):
         '''main of CliParse class'''
-        retweetepilog = 'For more information: https://retweet.readhthedocs.org'
+        retweetepilog = 'For more information: https://retweet.readthedocs.org'
         retweetdescription = 'Retweet retweets all tweets from a Twitter account' 
         parser = ArgumentParser(prog='retweet',
                                 description=retweetdescription,
