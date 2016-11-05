@@ -38,6 +38,7 @@ class ConfParse(object):
         self.olderthan = 0
         self.youngerthan = 0
         self.like = False
+        self.blacklist = []
         self.main()
 
     def main(self):
@@ -86,6 +87,11 @@ class ConfParse(object):
                     # like option
                     if config.has_option(section, 'like'):
                         self.like = config.getboolean(section, 'like')
+
+                    # blacklist option
+                    if config.has_option(section, 'blacklist'):
+                        self.blacklist = [x.strip() for x in config.get(section, 'blacklist').split(',')]
+
                 ### sqlite section
                 section = 'sqlite'
                 if config.has_section(section):
@@ -138,4 +144,5 @@ class ConfParse(object):
                 'onlyifhashtags': self.onlyiftags,
                 'olderthan': self.olderthan,
                 'youngerthan': self.youngerthan,
-                'like': self.like}
+                'like': self.like,
+                'blacklist': self.blacklist}

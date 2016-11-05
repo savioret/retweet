@@ -38,22 +38,35 @@ class TweetWasPosted:
         cur = self.con.cursor()
         cur.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='senttweets'")
         exists = cur.fetchone()
-        print("exists", type(exists), exists)
+
         if exists[0] == 0:
             cur = self.con.cursor()
-            cur.execute("CREATE TABLE senttweets(id INTEGER(8) PRIMARY KEY, user_id INTEGER(8), addded INT, timestamp INT)")
+            cur.execute("""CREATE TABLE senttweets
+                (id INTEGER(8) PRIMARY KEY, name TEXT, posted INT, timestamp INT)""")
             self.con.commit()
             print("Creating table")
 
     def last_processed_id(self):
-        cur = self.con.cursor()
-        cur.execute("SELECT id FROM senttweets ORDER BY timestamp DESC LIMIT 1")
-        twinfo = cur.fetchone()
-        if twinfo is not None:
-            return twinfo[0]
+        v = self.get_last_processed()
+        if v and len(v):
+            return v[0]['id']
 
-    def wasposted(self, tweet_id):
-        print("TYPE",type(tweet_id), str(tweet_id))
+    def get_last_processed(self, num):
+        #self.con.row_factory = lite.Row
+        cur = self.con.cursor()
+        cur.execute("""SELECT id, name, posted, timestamp FROM 
+            senttweets ORDER BY timestamp DESC LIMIT 0,?""", (num,))
+        res = []
+        for row in cur:
+            res.append({
+                'id':row[0], 
+                'name':row[1], 
+                'posted':row[2], 
+                'timestamp':row[3]})
+        return res
+        #return cur.fetchall()
+
+    def is_stored(self, tweet_id):
         cur = self.con.cursor()
         cur.execute("SELECT COUNT(*) FROM senttweets WHERE id=?", (tweet_id,))
         twinfo = cur.fetchone()
@@ -63,9 +76,9 @@ class TweetWasPosted:
         else:
             return False
 
-    def storetweet(self, tweet_id, user_id, added):
+    def storetweet(self, tweet_id, name, posted):
         cur = self.con.cursor()
-        cur.execute("INSERT INTO senttweets(id, user_id, timestamp) VALUES (?,?,?,?)", 
-            (int(tweet_id), int(user_id), added, int(time.time())))
+        cur.execute("INSERT INTO senttweets(id, name, posted, timestamp) VALUES (?,?,?,?)", 
+            (int(tweet_id), name, posted, int(time.time())))
         self.con.commit()
 

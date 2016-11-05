@@ -36,7 +36,7 @@ class Validate(object):
         self.api = api
         self.args = args
         self.cfgvalues = cfgvalues
-        self.storeit = False
+        self.postit = False
         self.tweet = tweet
         self.twp = TweetWasPosted(self.cfgvalues)
         self.main()
@@ -45,86 +45,104 @@ class Validate(object):
         '''Main of the Validate class'''
         try:
             # test if it was retweeted enough to be retweeted by me
-            if len(self.api.retweets(self.tweet.id)) >= self.cfgvalues['retweets']:
+            if self.tweet.retweet_count >= self.cfgvalues['retweets']:
+                print("IHT:", self.has_invalid_hashtags(), "VHT:", 
+                    self.has_valid_hashtags(),"OLD:", self.is_old_enough(), 
+                    "YNG:",self.is_young_enough())
                 # send the tweet if all checks are ok
-                if not self.notretweethashes() and self.retweetonlyifhashtags() and self.retweetonlyifolderthan() and self.retweetonlyifoyoungerthan():
-                    self.storeit = True
-                    if self.args.dryrun:
-                        print("tweet {} sent!".format(self.tweet.id))
-                    else:
+                invalid = self.tweet.retweeted or \
+                    self.has_invalid_hashtags() or not self.has_valid_hashtags() \
+                    or not self.is_old_enough() or not self.is_young_enough() \
+                    or self.is_blacklisted()
+                self.postit = not invalid
+
+                if self.postit:
+                    if not self.args.dryrun:
                         # at last retweet the tweet
                         self.api.retweet(self.tweet.id)
                         if self.cfgvalues['like']:
                             self.api.create_favorite(self.tweet.id)
-                else:
-                    self.storeit = False
+                    print("tweet {} sent!".format(self.tweet.id))
+
+
         except (tweepy.error.TweepError) as err:
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
         finally:
             # now store the tweet
-            if not self.twp.wasposted(self.tweet.id) and self.storeit:
+            if not self.twp.is_stored(self.tweet.id):
                 if not self.args.dryrun:
-                    self.twp.storetweet(self.tweet.id, self.tweet.user.id)
-                WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
+                    self.twp.storetweet(self.tweet.id, self.tweet.user.screen_name, self.postit)
+                if self.postit:
+                    WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
-    def notretweethashes(self):
+    def to_string(self):
+        return "%s\n %s by %s RT:%d RTC:%d"%(
+            self.tweet.text, self.tweet.created_at, self.tweet.user.screen_name,
+            self.tweet.retweeted, self.tweet.retweet_count)
+
+    def was_posted(self):
+        return self.postit
+
+    def is_blacklisted(self):
+        # check screen name !!!
+        return False
+
+    def has_invalid_hashtags(self):
         '''check if the tweet has a hash for not retweeting'''
         found = False
         # check if the current tweet contains a do-not-retweet hash
         for i in self.cfgvalues['dontretweethashes']:
-            if '#{}'.format(i) in self.api.get_status(self.tweet.id).text:
+            if '#{}'.format(i) in self.tweet.text:
                 found = True
         return found
 
-    def retweetonlyifhashtags(self):
+    def has_valid_hashtags(self):
         '''retweet only if the tweet has the following hashtag'''
         found = False
         if self.cfgvalues['onlyifhashtags']:
             # check if the current tweet contains one of the hashtags to be retweeted
             for i in self.cfgvalues['onlyifhashtags']:
-                if '#{}'.format(i) in self.api.get_status(self.tweet.id).text:
+                if '#{}'.format(i) in self.tweet.text:
                     found = True
         else:
             found = True
         return found
 
-    def retweetonlyifolderthan(self):
+    def is_old_enough(self):
         '''retweet only if the tweet is older than a number of minutes'''
-        send = False
+        old = False
         if self.cfgvalues['olderthan']:
             # check if the tweet is older than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.api.get_status(self.tweet.id).created_at
+            tweetbirth = self.tweet.created_at
             lapse = now - tweetbirth
-            print("Tweet older lapse seconds", lapse.seconds)
             try:
                 if (lapse.seconds / 60) > self.cfgvalues['olderthan']:
-                    send = True
+                    old = True
                 else:
-                    send = False
+                    old = False
             except ValueError:
-                send = False
+                old = False
         else:
-            send = True
-        return send
+            old = True
+        return old
 
-    def retweetonlyifoyoungerthan(self):
+    def is_young_enough(self):
         '''retweet only if the tweet is younger than a number of minutes'''
-        send = False
+        young = False
         if self.cfgvalues['youngerthan']:
             # check if the tweet is younger than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.api.get_status(self.tweet.id).created_at
+            tweetbirth = self.tweet.created_at
             lapse = now - tweetbirth
-            print("Tweet younger lapse seconds", lapse.seconds)
             try:
                 if (lapse.seconds / 60) < self.cfgvalues['youngerthan']:
-                    send = True
+                    young = True
                 else:
-                    send = False
+                    young = False
             except ValueError:
-                send = False
+                young = False
         else:
-            send = True
-        return send
+            young = True
+        return young

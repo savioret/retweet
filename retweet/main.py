@@ -56,30 +56,44 @@ class Main(object):
     def main(self):
         '''Main of the Main class'''
 
-        # TODO: Meter un since_id guardado en el sqlite
-        lasttweets = self.api.search(self.cfgvalues['search_query'], rpp=100)
+        last_processed = self.twp.get_last_processed(6)
+        last_id=None
+        if last_processed:
+            print("LASTPROC", last_processed)
+            last_id = last_processed[0]['id']
+            if last_id:
+                print("Searching since ID", last_id)
+            for tw in last_processed:
+                self.cfgvalues['blacklist'].append(tw['name'])
+
+        lasttweets = self.api.search(self.cfgvalues['search_query'], rpp=100, since_id=last_id)
 
         # extract the last tweet ids
         #lasttweetids = [tweet.id for tweet in lasttweets]
         ordered_tweets = list(reversed(lasttweets))
         # see if the last tweet of twitter api was sent already
-        lasttweetid = ordered_tweets[0]
+        #lasttweetid = ordered_tweets[0]
         print("Fetching %d tweets"%len(ordered_tweets))
-        if self.args.limit:
-            # take the oldest N
-            ordered_tweets = ordered_tweets[0:self.args.limit]
-            print("Limiting to oldest %d tweets"%len(ordered_tweets))
-        tweetstosend = []
+        # if self.args.limit:
+        #     # take the oldest N
+        #     ordered_tweets = ordered_tweets[0:self.args.limit]
+        #     print("Limiting to oldest %d tweets"%len(ordered_tweets))
+        # tweetstosend = []
 
         # in_reply_to_user_id_str == None
         # in_reply_to_user_id_str
         # favorited = False
         # retweet_count
         # user.id
-        # 
+
+        posted_cnt = 0
         # test if the last tweets were posted
         for lasttweet in ordered_tweets:
-            if not self.twp.wasposted(lasttweet.id):
-                print("Tweet was not posted yet: ", lasttweet.id)
-                Validate(self.cfgvalues, self.args, self.api, lasttweet)
+            if not self.twp.is_stored(lasttweet.id):
+                print("[%d] Tweet was not processed yet: "%posted_cnt, lasttweet.id)
+                v = Validate(self.cfgvalues, self.args, self.api, lasttweet)
+                print(v.to_string()+"\n----------------------------------------")
+                posted_cnt += 1 if v.was_posted() else 0
+                if self.args.limit and posted_cnt >= self.args.limit:
+                    break
         sys.exit(0)
