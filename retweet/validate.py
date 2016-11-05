@@ -65,7 +65,7 @@ class Validate(object):
             # now store the tweet
             if not self.twp.wasposted(self.tweet.id) and self.storeit:
                 if not self.args.dryrun:
-                    self.twp.storetweet(self.tweet.id)
+                    self.twp.storetweet(self.tweet.id, self.tweet.user.id)
                 WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
     def notretweethashes(self):

@@ -11,5 +11,5 @@ class SentTweets(MYBASE):
     __tablename__ = 'senttweets'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    user_id = Column(Integer)
     timestamp = Column(DateTime)

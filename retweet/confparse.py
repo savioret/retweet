@@ -24,7 +24,6 @@ class ConfParse(object):
     '''ConfParse class'''
     def __init__(self, pathtoconf):
         '''Constructor of the ConfParse class'''
-        self.user_to_retweet = 'journaldupirate'
         self.search_query = ''
         self.consumer_key = ''
         self.consumer_secret = ''
@@ -51,7 +50,6 @@ class ConfParse(object):
                 ### twitter section
                 section = 'twitter'
                 if config.has_section(section):
-                    self.user_to_retweet = config.get(section, 'screen_name_of_the_user_to_retweet')
                     self.search_query = config.get(section, 'search_query')
                     self.consumer_key = config.get(section, 'consumer_key')
                     self.consumer_secret = config.get(section, 'consumer_secret')
@@ -127,8 +125,7 @@ class ConfParse(object):
     @property
     def confvalues(self):
         '''get the values of the configuration file'''
-        return {'user_to_retweet':  self.user_to_retweet,
-                'search_query': self.search_query,
+        return {'search_query': self.search_query,
                 'consumer_key': self.consumer_key,
                 'consumer_secret': self.consumer_secret,
                 'access_token': self.access_token,

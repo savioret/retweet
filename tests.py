@@ -31,7 +31,7 @@ class TestRetweet(unittest.TestCase):
     def test_getconfigvars(self):
         '''Test the ConfParse class'''
         confp = ConfParse('tests/getconfigvars/retweet.ini')
-        self.assertEqual(confp.confvalues, {'user_to_retweet': 'journalduhacker',
+        self.assertEqual(confp.confvalues, {'search_query': 'from:journalduhacker',
                                             'consumer_key': '4s3nOBU7hUkPrTqeWzw6lxzC3',
                                             'consumer_secret': 'aoWjhD7UQcXfxipa2ufkypqiUle9cF0ZlaOngiOAiJyFb23Ftb',
                                             'access_token': '1370158707-m8eN2YcfVcKGfWmVLERDGMd1UPKHVPzAQHoP7qa',
@@ -49,7 +49,7 @@ class TestRetweet(unittest.TestCase):
     def test_getconfigvarsnodnr(self):
         '''Test the ConfParse class'''
         confp = ConfParse('tests/getconfigvars/retweet-nodnr.ini')
-        self.assertEqual(confp.confvalues, {'user_to_retweet': 'journalduhacker',
+        self.assertEqual(confp.confvalues, {'search_query': 'from:journalduhacker',
                                             'consumer_key': '4s3nOBU7hUkPrTqeWzw6lxzC3',
                                             'consumer_secret': 'aoWjhD7UQcXfxipa2ufkypqiUle9cF0ZlaOngiOAiJyFb23Ftb',
                                             'access_token': '1370158707-m8eN2YcfVcKGfWmVLERDGMd1UPKHVPzAQHoP7qa',

@@ -16,14 +16,8 @@
 '''Was this tweet posted before'''
 
 # external library imports
-import sqlalchemy
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-
-# retweet library imports
-from retweet.senttweets import SentTweets
-
+import sqlite3 as lite
+import time
 
 class TweetWasPosted:
     '''Was this tweet posted before'''
@@ -31,28 +25,47 @@ class TweetWasPosted:
         '''Constructor of the TweetWasPosted'''
         self.cfgvalues = cfgvalues
         # activate the sqlite db
-        engine = create_engine('sqlite:///{}'.format(self.cfgvalues['sqlitepath']))
-        tmpsession = sessionmaker(bind=engine)
-        session = tmpsession()
-        self.session = session
-        SentTweets.metadata.create_all(engine)
-        self.allsenttweetids=[]
-        for twid in self.session.query(SentTweets.id).all():
-            self.allsenttweetids.append(twid.id)
+        print("Opening database %s"%self.cfgvalues['sqlitepath'])
+        self.con = lite.connect(self.cfgvalues['sqlitepath'])
+        #self.cur = con.cursor()
+        self.create_all()
 
-    def wasposted(self, tweet):
+    def __del__(self):
+        print("Closing database connection")
+        self.con.close()
+
+    def create_all(self):
+        cur = self.con.cursor()
+        cur.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='senttweets'")
+        exists = cur.fetchone()
+        print("exists", type(exists), exists)
+        if exists[0] == 0:
+            cur = self.con.cursor()
+            cur.execute("CREATE TABLE senttweets(id INTEGER(8) PRIMARY KEY, user_id INTEGER(8), addded INT, timestamp INT)")
+            self.con.commit()
+            print("Creating table")
+
+    def last_processed_id(self):
+        cur = self.con.cursor()
+        cur.execute("SELECT id FROM senttweets ORDER BY timestamp DESC LIMIT 1")
+        twinfo = cur.fetchone()
+        if twinfo is not None:
+            return twinfo[0]
+
+    def wasposted(self, tweet_id):
+        print("TYPE",type(tweet_id), str(tweet_id))
+        cur = self.con.cursor()
+        cur.execute("SELECT COUNT(*) FROM senttweets WHERE id=?", (tweet_id,))
+        twinfo = cur.fetchone()
         '''Was this tweet posted already'''
-        if tweet in self.allsenttweetids:
+        if twinfo[0]:
             return True
         else:
             return False
 
-    def storetweet(self, tweettostore):
-        '''Store the last sent tweet'''
-        lastsenttweet = SentTweets(id=tweettostore)
-        try:
-            self.session.add(lastsenttweet)
-            self.session.commit()
-        except (sqlalchemy.exc.IntegrityError) as err:
-            print(err)
-            print('tweet already posted')
+    def storetweet(self, tweet_id, user_id, added):
+        cur = self.con.cursor()
+        cur.execute("INSERT INTO senttweets(id, user_id, timestamp) VALUES (?,?,?,?)", 
+            (int(tweet_id), int(user_id), added, int(time.time())))
+        self.con.commit()
+
