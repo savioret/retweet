@@ -97,22 +97,21 @@ class Main(object):
 
         self.update_cache_table()
 
-        # TODO: add configparse variable as author_frequency
-        author_frequency = 6
+        # users not to process (handled different to blacklisted users)
         exclude_users = []
-        if author_frequency:
-            last_posted = self.twp.get_last_posted(author_frequency)
+        if self.cfgvalues['author_frequency']:
+            last_posted = self.twp.get_last_posted(self.cfgvalues['author_frequency'])
             last_id=None
             if last_posted:
                 for tw in last_posted:
                     exclude_users.append(tw['name'])
                 print("Excluding from process: ", exclude_users)
 
-        # get tweets based upon the cache table
+        # get API tweets based upon the cache table
         unprocessed = self.fetch_oldest_unprocessed_tweets(100, exclude_users)
 
-        for t in unprocessed:
-            print(t.created_at)
+        # for t in unprocessed:
+        #     print(t.created_at)
 
         # extract the last tweet ids
         print("Fetching %d tweets"%len(unprocessed))

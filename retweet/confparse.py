@@ -39,6 +39,7 @@ class ConfParse(object):
         self.youngerthan = 0
         self.like = False
         self.blacklist = []
+        self.author_frequency = 0
         self.main()
 
     def main(self):
@@ -84,6 +85,10 @@ class ConfParse(object):
                     # younger_than option
                     if config.has_option(section, 'younger_than'):
                         self.youngerthan = config.get(section, 'younger_than')
+                    # author_frequency option
+                    if config.has_option(section, 'author_frequency'):
+                        self.author_frequency = config.get(section, 'author_frequency')
+
                     # like option
                     if config.has_option(section, 'like'):
                         self.like = config.getboolean(section, 'like')
@@ -145,4 +150,5 @@ class ConfParse(object):
                 'olderthan': self.olderthan,
                 'youngerthan': self.youngerthan,
                 'like': self.like,
-                'blacklist': self.blacklist}
+                'blacklist': self.blacklist,
+                'author_frequency': self.author_frequency}
