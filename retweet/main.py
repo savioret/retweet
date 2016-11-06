@@ -20,7 +20,6 @@
 import configparser
 import os.path
 import sys
-from operator import itemgetter
 
 # external library imports
 import tweepy
@@ -28,7 +27,7 @@ import tweepy
 # retweet imports
 from retweet.cliparse import CliParse
 from retweet.confparse import ConfParse
-from retweet.tweetwasposted import TweetWasPosted
+from retweet.tweetcache import TweetCache
 from retweet.validate import Validate
 from retweet.waitamoment import WaitAMoment
 
@@ -43,7 +42,7 @@ class Main(object):
         # read the configuration file
         cfgparse = ConfParse(self.args.pathtoconf)
         self.cfgvalues = cfgparse.confvalues
-        self.twp = TweetWasPosted(self.cfgvalues)
+        self.twp = TweetCache(self.cfgvalues)
 
         # activate the twitter api
         self.auth = tweepy.OAuthHandler(self.cfgvalues['consumer_key'],
@@ -56,7 +55,7 @@ class Main(object):
 
     def update_cache_table(self, max_tweets=300):
         last_id = self.twp.get_last_cached_id()
-        if not last_id:# is None or len(lasttweets) == 0:
+        if not last_id:
             print("No cache, first lookup")
             # empty cache, look for a big amount of results
             lasttweets = self.api.search(self.cfgvalues['search_query'], count=100)
@@ -84,16 +83,13 @@ class Main(object):
                 self.twp.cache_tweets(lasttweets)
         print("Added %d entries to cache table"%count)
 
-    def fetch_oldest_unprocessed_tweets(self, max_tweets=100):
-        ids = self.twp.get_oldest_unprocessed_ids(max_tweets)
-        lasttweets = self.api.statuses_lookup(ids)
+    def fetch_oldest_unprocessed_tweets(self, max_tweets=100, exclude_users=[]):
+        ids = self.twp.get_oldest_unprocessed_ids(max_tweets, exclude_users)
+        lasttweets = []
+        if len(ids):
+            lasttweets = self.api.statuses_lookup(ids)
+            lasttweets = sorted(lasttweets, key = lambda item: item.id)
 
-        #sorted(lasttweets, key=itemgetter('name', 'age'))
-        lasttweets = sorted(lasttweets, key = lambda item: item.id)
-        c = 0
-        for id in ids:
-            print("%s = %s"%(id, lasttweets[c].id))
-            c+=1
         return lasttweets
 
     def main(self):
@@ -101,40 +97,25 @@ class Main(object):
 
         self.update_cache_table()
 
-        last_processed = self.twp.get_last_processed(6)
-        last_id=None
-        if last_processed:
-            # print("LASTPROC", last_processed)
-            # last_id = last_processed[0]['id']
-            # if last_id:
-            #     print("Searching since ID", last_id)
-            for tw in last_processed:
-                self.cfgvalues['blacklist'].append(tw['name'])
+        # TODO: add configparse variable as author_frequency
+        author_frequency = 6
+        exclude_users = []
+        if author_frequency:
+            last_posted = self.twp.get_last_posted(author_frequency)
+            last_id=None
+            if last_posted:
+                for tw in last_posted:
+                    exclude_users.append(tw['name'])
+                print("Excluding from process: ", exclude_users)
 
         # get tweets based upon the cache table
-        unprocessed = self.fetch_oldest_unprocessed_tweets()
-        #lasttweets = self.api.search(self.cfgvalues['search_query'], count=100, since_id=last_id)
+        unprocessed = self.fetch_oldest_unprocessed_tweets(100, exclude_users)
 
         for t in unprocessed:
             print(t.created_at)
 
         # extract the last tweet ids
-        #lasttweetids = [tweet.id for tweet in lasttweets]
-        #ordered_tweets = list(reversed(lasttweets))
-        # see if the last tweet of twitter api was sent already
-        #lasttweetid = ordered_tweets[0]
         print("Fetching %d tweets"%len(unprocessed))
-        # if self.args.limit:
-        #     # take the oldest N
-        #     ordered_tweets = ordered_tweets[0:self.args.limit]
-        #     print("Limiting to oldest %d tweets"%len(ordered_tweets))
-        # tweetstosend = []
-
-        # in_reply_to_user_id_str == None
-        # in_reply_to_user_id_str
-        # favorited = False
-        # retweet_count
-        # user.id
 
         posted_cnt = 0
         process_cnt = 0

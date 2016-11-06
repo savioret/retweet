@@ -25,7 +25,7 @@ import sys
 import tweepy
 
 # retweet library imports
-from retweet.tweetwasposted import TweetWasPosted
+from retweet.tweetcache import TweetCache
 from retweet.waitamoment import WaitAMoment
 
 
@@ -38,7 +38,7 @@ class Validate(object):
         self.cfgvalues = cfgvalues
         self.postit = False
         self.tweet = tweet
-        self.twp = TweetWasPosted(self.cfgvalues)
+        self.twp = TweetCache(self.cfgvalues)
         self.main()
 
     def main(self):
@@ -48,7 +48,7 @@ class Validate(object):
             if self.tweet.retweet_count >= self.cfgvalues['retweets']:
                 print("IHT:", self.has_invalid_hashtags(), "VHT:", 
                     self.has_valid_hashtags(),"OLD:", self.is_old_enough(), 
-                    "YNG:",self.is_young_enough())
+                    "YNG:",self.is_young_enough(), "BL:", self.is_blacklisted())
                 # send the tweet if all checks are ok
                 invalid = self.tweet.retweeted or \
                     self.has_invalid_hashtags() or not self.has_valid_hashtags() \
@@ -69,12 +69,11 @@ class Validate(object):
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
         finally:
-            # now store the tweet as processed
-            if not self.twp.is_stored(self.tweet.id):
-                if not self.args.dryrun:
-                    self.twp.process_tweet(self.tweet.id, self.postit)
-                if self.postit:
-                    WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
+            # now set the tweet as processed
+            if not self.args.dryrun:
+                self.twp.process_tweet(self.tweet.id, self.postit)
+            if self.postit:
+                WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
     def to_string(self):
         return "%s\n %s by %s RT:%d RTC:%d"%(
@@ -85,8 +84,8 @@ class Validate(object):
         return self.postit
 
     def is_blacklisted(self):
-        # check screen name !!!
-        return False
+        '''check if the tweet has a authors for not retweeting'''
+        return self.tweet.user.screen_name in self.cfgvalues['blacklist']
 
     def has_invalid_hashtags(self):
         '''check if the tweet has a hash for not retweeting'''
