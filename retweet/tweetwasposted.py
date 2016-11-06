@@ -42,7 +42,7 @@ class TweetWasPosted:
         if exists[0] == 0:
             cur = self.con.cursor()
             cur.execute("""CREATE TABLE senttweets
-                (id INTEGER(8) PRIMARY KEY, name TEXT, posted INT, timestamp INT)""")
+                (id INTEGER(8) PRIMARY KEY, name TEXT, posted INT, processed INT, timestamp INT)""")
             self.con.commit()
             print("Creating table")
 
@@ -51,11 +51,35 @@ class TweetWasPosted:
         if v and len(v):
             return v[0]['id']
 
+    # ordered by ascending ID
+    def get_oldest_unprocessed_ids(self, num):
+        cur = self.con.cursor()
+        cur.execute("""SELECT id
+            FROM senttweets
+            WHERE processed = 0
+            ORDER BY id ASC LIMIT 0,?""", (num,))
+        rows = cur.fetchall()
+        ids = []
+        for row in rows:
+            ids.append(row[0])
+
+        return ids
+
+    def get_last_cached_id(self):
+        #self.con.row_factory = lite.Row
+        cur = self.con.cursor()
+        cur.execute("SELECT MAX(id) FROM senttweets")
+        res = cur.fetchone()
+        if res:
+            return res[0]
+
     def get_last_processed(self, num):
         #self.con.row_factory = lite.Row
         cur = self.con.cursor()
-        cur.execute("""SELECT id, name, posted, timestamp FROM 
-            senttweets ORDER BY timestamp DESC LIMIT 0,?""", (num,))
+        cur.execute("""SELECT id, name, posted, timestamp 
+            FROM senttweets 
+            WHERE processed = 1
+            ORDER BY id DESC LIMIT 0,?""", (num,))
         res = []
         for row in cur:
             res.append({
@@ -76,9 +100,19 @@ class TweetWasPosted:
         else:
             return False
 
-    def storetweet(self, tweet_id, name, posted):
+    def cache_tweets(self, tweets):
+        for t in tweets:
+            self.store_tweet(t.id, t.user.screen_name, 0, 0)
+
+    def process_tweet(self, tweet_id, posted, processed=1):
         cur = self.con.cursor()
-        cur.execute("INSERT INTO senttweets(id, name, posted, timestamp) VALUES (?,?,?,?)", 
-            (int(tweet_id), name, posted, int(time.time())))
+        cur.execute("UPDATE senttweets SET posted=?, processed=?, timestamp=?) WHERE id=?", 
+            (posted, processed, int(time.time()), int(tweet_id)))
+        self.con.commit()
+
+    def store_tweet(self, tweet_id, name, posted, processed):
+        cur = self.con.cursor()
+        cur.execute("INSERT INTO senttweets(id, name, posted, processed, timestamp) VALUES (?,?,?,?,?)", 
+            (int(tweet_id), name, posted, processed, int(time.time())))
         self.con.commit()
 

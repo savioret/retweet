@@ -69,10 +69,10 @@ class Validate(object):
             print("{}".format(err))
             print("the tweet is probably retweeted already. Twitter does not allow to retweet 2 times")
         finally:
-            # now store the tweet
+            # now store the tweet as processed
             if not self.twp.is_stored(self.tweet.id):
                 if not self.args.dryrun:
-                    self.twp.storetweet(self.tweet.id, self.tweet.user.screen_name, self.postit)
+                    self.twp.process_tweet(self.tweet.id, self.postit)
                 if self.postit:
                     WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
@@ -115,8 +115,8 @@ class Validate(object):
         if self.cfgvalues['olderthan']:
             # check if the tweet is older than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.tweet.created_at
-            lapse = now - tweetbirth
+            lapse = now - self.tweet.created_at
+            print("OLD LAPSE:", lapse.seconds/60, "|", now, "|", self.tweet.created_at)
             try:
                 if (lapse.seconds / 60) > self.cfgvalues['olderthan']:
                     old = True
@@ -134,8 +134,7 @@ class Validate(object):
         if self.cfgvalues['youngerthan']:
             # check if the tweet is younger than a number of minutes
             now = datetime.datetime.utcnow()
-            tweetbirth = self.tweet.created_at
-            lapse = now - tweetbirth
+            lapse = now - self.tweet.created_at
             try:
                 if (lapse.seconds / 60) < self.cfgvalues['youngerthan']:
                     young = True
