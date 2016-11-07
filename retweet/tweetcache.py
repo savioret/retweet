@@ -91,7 +91,7 @@ class TweetCache:
             cur.execute("""SELECT id, name, processed, timestamp 
                 FROM tweetcache 
                 WHERE posted = 1
-                ORDER BY id DESC LIMIT 0,?""", (num,))
+                ORDER BY timestamp DESC LIMIT 0,?""", (num,))
             for row in cur:
                 res.append({
                     'id':row[0], 
