@@ -21,6 +21,8 @@ import configparser
 import os.path
 import sys
 
+import time
+
 # external library imports
 import tweepy
 
@@ -95,6 +97,7 @@ class Main(object):
     def main(self):
         '''Main of the Main class'''
 
+	print("\n----", time.strftime('%x %X'))
         self.update_cache_table()
 
         # users not to process (handled different to blacklisted users)
