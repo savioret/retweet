@@ -97,7 +97,7 @@ class Main(object):
     def main(self):
         '''Main of the Main class'''
 
-	print("\n----", time.strftime('%x %X'))
+        print("\n----", time.strftime('%x %X'))
         self.update_cache_table()
 
         # users not to process (handled different to blacklisted users)
@@ -110,8 +110,11 @@ class Main(object):
                     exclude_users.append(tw['name'])
                 print("Excluding from process: ", exclude_users)
 
-        # get API tweets based upon the cache table
-        unprocessed = self.fetch_oldest_unprocessed_tweets(100, exclude_users)
+        if self.args.tweet_id:
+                unprocessed = self.api.statuses_lookup([self.args.tweet_id])
+        else:
+                # get API tweets based upon the cache table
+                unprocessed = self.fetch_oldest_unprocessed_tweets(100, exclude_users)
 
         # for t in unprocessed:
         #     print(t.created_at)

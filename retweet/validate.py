@@ -50,7 +50,7 @@ class Validate(object):
                     self.has_valid_hashtags(),"OLD:", self.is_old_enough(), 
                     "YNG:",self.is_young_enough(), "BL:", self.is_blacklisted())
                 # send the tweet if all checks are ok
-                invalid = self.tweet.retweeted or \
+                invalid = self.tweet.retweeted or self.tweet.in_reply_to_status_id or \
                     self.has_invalid_hashtags() or not self.has_valid_hashtags() \
                     or not self.is_old_enough() or not self.is_young_enough() \
                     or self.is_blacklisted()
@@ -76,9 +76,10 @@ class Validate(object):
                 WaitAMoment(self.cfgvalues['waitminsecs'], self.cfgvalues['waitmaxsecs'])
 
     def to_string(self):
-        return "%s\n %s by %s RT:%d RTC:%d"%(
+        rpl = self.tweet.in_reply_to_status_id or 0
+        return "%s\n %s by %s RT:%d RTC:%d RPL:%d"%(
             self.tweet.text, self.tweet.created_at, self.tweet.user.screen_name,
-            self.tweet.retweeted, self.tweet.retweet_count)
+		self.tweet.retweeted, self.tweet.retweet_count, rpl)
 
     def was_posted(self):
         return self.postit
