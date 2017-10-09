@@ -120,6 +120,7 @@ class TweetCache:
             print("Error %s:" % e.args[0])
         return res
 
+
     def is_stored(self, tweet_id):
         try:
             cur = self.con.cursor()

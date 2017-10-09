@@ -94,10 +94,34 @@ class Main(object):
 
         return lasttweets
 
+    def cleanup_unexisting_tweets(self, max_tweets=100):
+        ids = self.twp.get_oldest_unprocessed_ids(max_tweets)
+        statuses = None
+        remove = lasttweets = []
+        if len(ids):
+            lasttweets = self.api.statuses_lookup(ids)
+            if lasttweets:
+                statuses = [x.id for x in lasttweets]
+
+        if statuses is not None:
+            remove = set(ids) - set(statuses)
+
+        if not self.args.dryrun:
+            for tid in remove:
+                self.twp.process_tweet(tid, 0)
+
+        return remove
+
+
     def main(self):
         '''Main of the Main class'''
 
         print("\n----", time.strftime('%x %X'))
+
+        removed = self.cleanup_unexisting_tweets(100)
+        if len(removed):
+            print("Removed %d unexisting tweets"%len(removed), removed)
+
         self.update_cache_table()
 
         # users not to process (handled different to blacklisted users)
