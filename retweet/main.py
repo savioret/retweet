@@ -112,18 +112,7 @@ class Main(object):
 
         return remove
 
-
-    def main(self):
-        '''Main of the Main class'''
-
-        print("\n----", time.strftime('%x %X'))
-
-        removed = self.cleanup_unexisting_tweets(100)
-        if len(removed):
-            print("Removed %d unexisting tweets"%len(removed), removed)
-
-        self.update_cache_table()
-
+    def process_all(self):
         # users not to process (handled different to blacklisted users)
         exclude_users = []
         if self.cfgvalues['author_frequency']:
@@ -158,4 +147,25 @@ class Main(object):
             if self.args.limit and posted_cnt >= self.args.limit:
                 print("Reached posting limit of %d"%self.args.limit)
                 break
+
+    def main(self):
+        '''Main of the Main class'''
+
+        print("\n----", time.strftime('%x %X'))
+
+        if self.args.purge:
+            removed = self.cleanup_unexisting_tweets(100)
+            if len(removed):
+                print("Removed %d unexisting tweets"%len(removed), removed)
+
+        if self.args.throttle:
+            num = self.args.throttle
+            if num == 0:
+                num = self.cfgvalues['author_frequency'] 
+            self.twp.remove_throttling_users(num)
+
+        if self.args.purge is None and self.args.throttle is None
+            self.update_cache_table()
+            self.process_all()
+
         sys.exit(0)

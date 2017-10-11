@@ -47,6 +47,12 @@ class CliParse(object):
                             action='version',
                             version='%(prog)s 0.9',
                             help='print the version of retweet and exit')
+        parser.add_argument('--purge', dest='purge',
+                            action='store_true', default=False,
+                            help='Delete cached tweets that are not available anymore')                            
+        parser.add_argument('--throttle', dest='throttle', type=int, action='store', nargs='?', default=0,
+                            help='Delete cached tweets from users that have recently been twitted in the last N entries (defaults to author_frequency or 30)')
+
         args = parser.parse_args()
         if not os.path.exists(args.pathtoconf):
             print('the path you provided for the configuration file does not exists')

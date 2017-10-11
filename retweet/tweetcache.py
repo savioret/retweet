@@ -120,6 +120,25 @@ class TweetCache:
             print("Error %s:" % e.args[0])
         return res
 
+    # num_users users that have been tweeted and have at least min_tweets pending
+    def remove_throttling_users(self, num_users, min_tweets=2):
+        res = []
+        try:
+            cur = self.con.cursor()
+            cur.execute("""
+                SELECT id, name, t FROM (select id, name, count(*) as t from tweetcache WHERE processed=0 AND name IN (
+                SELECT name
+                FROM tweetcache
+                WHERE posted = 1
+                ORDER BY timestamp DESC LIMIT 0,? )
+                GROUP BY name ORDER BY t DESC) as x
+                WHERE x.t >= ?;            
+                """, (num_users, min_tweets))
+            for row in cur:
+                self.process_tweet(row[0], 0)
+        except lite.Error as e:
+            print("Error %s:" % e.args[0])
+        return res
 
     def is_stored(self, tweet_id):
         try:
