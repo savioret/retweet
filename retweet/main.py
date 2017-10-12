@@ -152,19 +152,19 @@ class Main(object):
         '''Main of the Main class'''
 
         print("\n----", time.strftime('%x %X'))
+        print("throttle", self.args.throttle,"purge", self.args.purge)
+        if self.args.purge is not None:
+            num =self.args.purge or 100
+            removed = self.cleanup_unexisting_tweets(num)
+            print("Removed %d unexisting tweets"%len(removed), removed)
 
-        if self.args.purge:
-            removed = self.cleanup_unexisting_tweets(100)
-            if len(removed):
-                print("Removed %d unexisting tweets"%len(removed), removed)
+        if self.args.throttle is not None:
+            num = self.args.throttle or self.cfgvalues['author_frequency']
+            removed = self.twp.remove_throttling_tweets(num, dryrun = self.args.dryrun)
+            print("Removed %d throttling user tweets"%len(removed), removed)
 
-        if self.args.throttle:
-            num = self.args.throttle
-            if num == 0:
-                num = self.cfgvalues['author_frequency'] 
-            self.twp.remove_throttling_users(num)
 
-        if self.args.purge is None and self.args.throttle is None
+        if self.args.purge is None and self.args.throttle is None:
             self.update_cache_table()
             self.process_all()
 

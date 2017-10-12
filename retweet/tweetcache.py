@@ -121,7 +121,7 @@ class TweetCache:
         return res
 
     # num_users users that have been tweeted and have at least min_tweets pending
-    def remove_throttling_users(self, num_users, min_tweets=2):
+    def remove_throttling_tweets(self, num_users, min_tweets=2, dryrun=False):
         res = []
         try:
             cur = self.con.cursor()
@@ -132,10 +132,12 @@ class TweetCache:
                 WHERE posted = 1
                 ORDER BY timestamp DESC LIMIT 0,? )
                 GROUP BY name ORDER BY t DESC) as x
-                WHERE x.t >= ?;            
+                WHERE x.t >= ?;
                 """, (num_users, min_tweets))
             for row in cur:
-                self.process_tweet(row[0], 0)
+                if not dryrun:
+                    self.process_tweet(row[0], 0)
+                res.append(row[0])
         except lite.Error as e:
             print("Error %s:" % e.args[0])
         return res
