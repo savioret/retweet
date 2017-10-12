@@ -152,7 +152,7 @@ class Main(object):
         '''Main of the Main class'''
 
         print("\n----", time.strftime('%x %X'))
-        print("throttle", self.args.throttle,"purge", self.args.purge)
+
         if self.args.purge is not None:
             num =self.args.purge or 100
             removed = self.cleanup_unexisting_tweets(num)
