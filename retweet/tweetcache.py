@@ -46,11 +46,6 @@ class TweetCache:
             self.con.commit()
             print("Creating table")
 
-    def last_processed_id(self):
-        v = self.get_last_processed()
-        if v and len(v):
-            return v[0]['id']
-
     # ordered by ascending ID
     def get_oldest_unprocessed_ids(self, num, exclude_users=[]):
         ids = []
@@ -109,7 +104,7 @@ class TweetCache:
             cur.execute("""SELECT id, name, posted, timestamp
                 FROM tweetcache
                 WHERE processed = 1
-                ORDER BY id DESC LIMIT 0,?""", (num,))
+                ORDER BY timestamp DESC LIMIT 0,?""", (num,))
             for row in cur:
                 res.append({
                     'id':row[0],
