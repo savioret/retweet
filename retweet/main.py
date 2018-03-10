@@ -22,6 +22,7 @@ import os.path
 import sys
 
 import time
+from datetime import datetime
 
 # external library imports
 import tweepy
@@ -33,6 +34,28 @@ from retweet.tweetcache import TweetCache
 from retweet.validate import Validate
 from retweet.waitamoment import WaitAMoment
 
+def show_pretty_table(data):
+    col_width = max(len(str(word)) for row in data for word in row) + 2  # padding
+    for row in data:
+        print("".join(str(word).ljust(col_width) for word in row))
+
+def show_sqlite_table(rows):
+    tuples = []
+    titles = []
+    n = 0
+    for r in rows:
+        t = []
+        for k,v in r.items():
+            if n == 0:
+                titles.append(k)
+            if k == 'timestamp':
+                v = datetime.fromtimestamp(int(v)).strftime('%Y/%m/%d %H:%M')
+            t.append(v)
+        if n == 0:
+            tuples.append(titles)
+        tuples.append(t)
+        n += 1
+    show_pretty_table(tuples)
 
 class Main(object):
     '''Main class'''
@@ -148,6 +171,29 @@ class Main(object):
                 print("Reached posting limit of %d"%self.args.limit)
                 break
 
+    def show_processed_tweets(self):
+        num = self.args.limit if self.args.limit else 1000
+        rows = self.twp.get_last_processed(num)
+        show_sqlite_table(rows)
+
+    def show_posted_tweets(self):
+        num = self.args.limit if self.args.limit else 1000
+        rows = self.twp.get_last_posted(num)
+        show_sqlite_table(rows)
+
+    def show_pending_tweets(self):
+        num = self.args.limit if self.args.limit else 1000
+        rows = self.twp.get_oldest_pending(num)
+        show_sqlite_table(rows)
+
+
+    def must_process_all(self):
+        return self.args.purge is None \
+            and self.args.throttle is None \
+            and not self.args.list_processed \
+            and not self.args.list_pending \
+            and not self.args.list_posted
+
     def main(self):
         '''Main of the Main class'''
 
@@ -163,8 +209,16 @@ class Main(object):
             removed = self.twp.remove_throttling_tweets(num, dryrun = self.args.dryrun)
             print("Removed %d throttling user tweets"%len(removed), removed)
 
+        if self.args.list_pending:
+            self.show_pending_tweets()
 
-        if self.args.purge is None and self.args.throttle is None:
+        if self.args.list_processed:
+            self.show_processed_tweets()
+
+        if self.args.list_posted:
+            self.show_posted_tweets()
+
+        if self.must_process_all():
             self.update_cache_table()
             self.process_all()
 

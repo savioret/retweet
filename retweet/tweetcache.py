@@ -88,15 +88,15 @@ class TweetCache:
         res = []
         try:
             cur = self.con.cursor()
-            cur.execute("""SELECT id, name, processed, timestamp 
-                FROM tweetcache 
+            cur.execute("""SELECT id, name, processed, timestamp
+                FROM tweetcache
                 WHERE posted = 1
                 ORDER BY timestamp DESC LIMIT 0,?""", (num,))
             for row in cur:
                 res.append({
-                    'id':row[0], 
-                    'name':row[1], 
-                    'processed':row[2], 
+                    'id':row[0],
+                    'name':row[1],
+                    'processed':row[2],
                     'timestamp':row[3]})
         except lite.Error as e:
             print("Error %s:" % e.args[0])
@@ -106,15 +106,33 @@ class TweetCache:
         res = []
         try:
             cur = self.con.cursor()
-            cur.execute("""SELECT id, name, posted, timestamp 
-                FROM tweetcache 
+            cur.execute("""SELECT id, name, posted, timestamp
+                FROM tweetcache
                 WHERE processed = 1
                 ORDER BY id DESC LIMIT 0,?""", (num,))
             for row in cur:
                 res.append({
-                    'id':row[0], 
-                    'name':row[1], 
-                    'posted':row[2], 
+                    'id':row[0],
+                    'name':row[1],
+                    'posted':row[2],
+                    'timestamp':row[3]})
+        except lite.Error as e:
+            print("Error %s:" % e.args[0])
+        return res
+
+    def get_oldest_pending(self, num):
+        res = []
+        try:
+            cur = self.con.cursor()
+            cur.execute("""SELECT id, name, posted, timestamp
+                FROM tweetcache
+                WHERE processed = 0
+                ORDER BY id ASC LIMIT 0,?""", (num,))
+            for row in cur:
+                res.append({
+                    'id':row[0],
+                    'name':row[1],
+                    'posted':row[2],
                     'timestamp':row[3]})
         except lite.Error as e:
             print("Error %s:" % e.args[0])
@@ -162,7 +180,7 @@ class TweetCache:
     def process_tweet(self, tweet_id, posted, processed=1):
         try:
             cur = self.con.cursor()
-            cur.execute("UPDATE tweetcache SET posted=?, processed=?, timestamp=? WHERE id=?", 
+            cur.execute("UPDATE tweetcache SET posted=?, processed=?, timestamp=? WHERE id=?",
                 (posted, processed, int(time.time()), int(tweet_id)))
             self.con.commit()
         except lite.Error as e:
@@ -171,7 +189,7 @@ class TweetCache:
     def store_tweet(self, tweet_id, name, posted, processed):
         try:
             cur = self.con.cursor()
-            cur.execute("INSERT INTO tweetcache(id, name, posted, processed, timestamp) VALUES (?,?,?,?,?)", 
+            cur.execute("INSERT INTO tweetcache(id, name, posted, processed, timestamp) VALUES (?,?,?,?,?)",
                 (int(tweet_id), name, posted, processed, int(time.time())))
             self.con.commit()
         except lite.Error as e:

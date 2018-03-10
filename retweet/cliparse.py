@@ -43,6 +43,18 @@ class CliParse(object):
         parser.add_argument('-n', '--dry-run', dest='dryrun',
                             action='store_true', default=False,
                             help='Do not actually feed database and do not send the tweets')
+        parser.add_argument('-i', '--list-pending', dest='list_pending',
+                            action='store_true', default=False,
+                            help='List pending tweets from cache table')
+        parser.add_argument('-p', '--list-processed', dest='list_processed',
+                            action='store_true', default=False,
+                            help='List last processed tweets from cache table')
+        parser.add_argument('-s', '--list-posted', dest='list_posted',
+                            action='store_true', default=False,
+                            help='List last posted tweets from cache table')
+        parser.add_argument('-g', '--grouped', dest='list_grouped',
+                            action='store_true', default=False,
+                            help='When using --list show the tweets grouped by author')
         parser.add_argument('-v', '--version',
                             action='version',
                             version='%(prog)s 0.9',
@@ -62,8 +74,8 @@ class CliParse(object):
             print('the path you provided for the configuration is not a file')
             sys.exit(1)
         if args.limit:
-            if args.limit > 20:
-                sys.exit('-l or --limit option integer should be equal or less than 20')
+            if args.limit > 20 and not args.list_processed and not args.list_pending and not args.list_posted:
+                sys.exit('-l or --limit option integer for processing should be equal or less than 20')
         self.args = args
 
     @property
